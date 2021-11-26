@@ -88,16 +88,16 @@ func (p *Program) loadShaders(vert_file string, frag_file string) {
 
 func (p *Program) scanAttributes() {
 	//scan through active attributes & create buffers & layouts for them
-	var num_attributes int32
-	gl.GetProgramiv(p.program, gl.ACTIVE_ATTRIBUTES, &num_attributes)
-	fmt.Printf("num_attributes: %d\n", num_attributes)
-	location := uint32(0)
-	for i := 0; i < int(num_attributes); i++ {
+	var numAttributes int32
+	gl.GetProgramiv(p.program, gl.ACTIVE_ATTRIBUTES, &numAttributes)
+	fmt.Printf("numAttributes: %d\n", numAttributes)
+	for i := 0; i < int(numAttributes); i++ {
 		var buf [64]uint8
 		var glType uint32
 		var arraySize int32
 		gl.GetActiveAttrib(p.program, uint32(i), int32(len(buf)), nil, &arraySize, &glType, &buf[0])
 		name := gl.GoStr(&buf[0])
+		location := uint32(gl.GetAttribLocation(p.program, &buf[0]))
 		size := int32(0)
 		rows := uint32(0)
 		buffer := uint32(0)
@@ -126,16 +126,15 @@ func (p *Program) scanAttributes() {
 			rows = 4
 		}
 		p.attributes[name] = Attribute{glType, size, rows, buffer, location}
-		location += rows
-		fmt.Printf("attribute: %s, %d, %d\n", name, size, rows)
+		fmt.Printf("attribute %d (%dx%d): %s\n", location, rows, size, name)
 	}
 }
 
 func (p *Program) scanUniforms() {
-	var num_uniforms int32
-	gl.GetProgramiv(p.program, gl.ACTIVE_UNIFORMS, &num_uniforms)
-	fmt.Printf("num_uniforms: %d\n", num_uniforms)
-	for i := 0; i < int(num_uniforms); i++ {
+	var numUniforms int32
+	gl.GetProgramiv(p.program, gl.ACTIVE_UNIFORMS, &numUniforms)
+	fmt.Printf("numUniforms: %d\n", numUniforms)
+	for i := 0; i < int(numUniforms); i++ {
 		var buf [64]uint8
 		var arraySize int32
 		var glType uint32
@@ -143,7 +142,7 @@ func (p *Program) scanUniforms() {
 		name := gl.GoStr(&buf[0])
 		location := gl.GetUniformLocation(p.program, &buf[0])
 		p.uniforms[name] = Uniform{glType, location}
-		fmt.Printf("uniform: %s, %d\n", name, location)
+		fmt.Printf("uniform %d: %s\n", location, name)
 	}
 }
 
