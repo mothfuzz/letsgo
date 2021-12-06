@@ -17,6 +17,32 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+//testing out rendering pipeline within an actor context
+type Gopher struct {
+	render.Transform
+	program	*render.Program
+}
+
+func (g *Gopher) Init() {
+	g.program = render.CreateProgram("basic.vert.glsl", "basic.frag.glsl")
+}
+func (g *Gopher) Update() {
+	g.Transform.Rotate(0, 0, 0.025)
+}
+func (g *Gopher) Draw() {
+	//TODO: switching programs every time is slow.
+	//cache draw calls & batch by program, then draw all at once during actors.Draw()
+	//TODO: Draw() should not be part of actors
+	g.program.BindBuffer("position", render.Quad.Position)
+	g.program.BindBuffer("texcoord", render.Quad.TexCoord)
+	g.program.Uniform("tex", render.Texture2D("gopog.png", false))
+	g.program.Uniform("MVP", render.MvpFromTransform(g.Transform, render.View, render.Projection))
+	g.program.Draw()
+}
+func (g *Gopher) Destroy() {}
+
+
+
 //go:embed resources
 var Resources embed.FS
 
@@ -62,43 +88,30 @@ func main() {
 
 	fmt.Println(gl.GoStr(gl.GetString(gl.VERSION)))
 
-	gl.Disable(gl.CULL_FACE)
+	gl.Enable(gl.CULL_FACE)
 	gl.CullFace(gl.BACK)
 	gl.FrontFace(gl.CW)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-	gl.Disable(gl.DEPTH_TEST)
+	gl.Enable(gl.DEPTH_TEST)
 	gl.ClearColor(0.2, 0.2, 0.3, 1.0)
 	gl.DepthFunc(gl.LESS)
 	gl.Viewport(0, 0, int32(width), int32(height))
 
-	proj := Perspective(DegToRad(60.0), float32(width)/float32(height), 0.1, 1000.0)
-	view := Ident4()
+
+	render.Projection = Perspective(DegToRad(60.0), float32(width)/float32(height), 0.1, 1000.0)
+	render.View = Ident4()
 
 	cameraPos := Vec3{0, 0, 2}
 
 	fmt.Println("starting...")
 
-	p := render.CreateProgram("basic.vert.glsl", "basic.frag.glsl")
-	pmod := Ident4()
-	p.BufferData("position", []float32{
-		-1, +1, 0,
-		+1, +1, 0,
-		+1, -1, 0,
-		+1, -1, 0,
-		-1, -1, 0,
-		-1, +1, 0,
-	})
-	p.BufferData("texcoord", []float32{
-		0, 0,
-		1, 0,
-		1, 1,
-		1, 1,
-		0, 1,
-		0, 0,
-	})
+	for i := 0; i < 3; i++ {
+		g := &Gopher{Transform: render.Origin}
+		g.Transform.Translate(float32(i), 0, float32(i) / 30.0)
+		actors.Spawn(g)
+	}
 
-	delta := float32(0)
 	timer := sdl.GetTicks()
 	ticks_passed := uint32(0)
 	frames_passed := 0
@@ -117,7 +130,6 @@ func main() {
 		}
 
 		actors.Update()
-		delta++
 
 		now := sdl.GetTicks()
 		ticks_passed += now - timer
@@ -131,14 +143,9 @@ func main() {
 
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-		view = LookAtV(cameraPos, cameraPos.Add(Vec3{0, 0, -1}), Vec3{0, 1, 0})
-		pmod = pmod.Mul4(Rotate3DZ(0.025).Mat4())
-		mv := view.Mul4(pmod)
-		mvp := proj.Mul4(mv)
+		render.View = LookAtV(cameraPos, cameraPos.Add(Vec3{0, 0, -1}), Vec3{0, 1, 0})
 
-		p.Uniform("tex", render.Texture2d("gopog.png", false))
-		p.Uniform("MVP", [16]float32(mvp))
-		p.Draw()
+		actors.Draw()
 
 		window.GLSwap()
 	}

@@ -1,6 +1,7 @@
 package render
 
 import (
+	"fmt"
 	gl "github.com/go-gl/gl/v3.1/gles2"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
@@ -8,12 +9,12 @@ import (
 
 var textures = map[string]uint32{}
 
-func Texture2d(name string, high_quality bool) uint32 {
+func Texture2D(name string, high_quality bool) uint32 {
 	if tex, ok := textures[name]; ok {
 		return tex
 	} else {
-		var texture uint32
-		gl.GenTextures(1, &texture)
+		fmt.Println("loading new texture: "+name)
+		gl.GenTextures(1, &tex)
 		bytes, err := Resources.ReadFile("resources/textures/" + name)
 		if err != nil {
 			panic(err)
@@ -41,6 +42,7 @@ func Texture2d(name string, high_quality bool) uint32 {
 		}
 		gl.GenerateMipmap(gl.TEXTURE_2D)
 		textures[name] = tex
+		gl.BindTexture(gl.TEXTURE_2D, 0)
 		return tex
 	}
 }

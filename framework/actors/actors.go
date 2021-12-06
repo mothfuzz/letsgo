@@ -10,23 +10,29 @@ type ActorId struct {
 type Actor interface {
 	Init()
 	Update()
+	Draw()
 	Destroy()
 }
 
 var base_id = int64(1)
 var actorsMap = make(map[ActorId]Actor)
 
-func Spawn(a Actor) (Actor, ActorId) {
+func Spawn(a Actor) ActorId {
 	id := ActorId{base_id}
 	base_id++
 	actorsMap[id] = a
 	a.Init()
-	return a, id
+	return id
 }
 
 func Update() {
 	for _, a := range(actorsMap) {
 		a.Update()
+	}
+}
+func Draw() {
+	for _, a := range(actorsMap) {
+		a.Draw()
 	}
 }
 
