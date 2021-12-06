@@ -7,10 +7,11 @@ import (
 	"strconv"
 
 	//"math"
-	_ "embed"
 	"dyndraw/framework/actors"
+	_ "embed"
 	//"dyndraw/framework/events"
 	"dyndraw/framework/render"
+	"dyndraw/framework/transform"
 
 	gl "github.com/go-gl/gl/v3.1/gles2"
 	. "github.com/go-gl/mathgl/mgl32"
@@ -19,29 +20,20 @@ import (
 
 //testing out rendering pipeline within an actor context
 type Gopher struct {
-	render.Transform
-	program	*render.Program
+	transform.Transform
+	sprite *render.Sprite
 }
 
 func (g *Gopher) Init() {
-	g.program = render.CreateProgram("basic.vert.glsl", "basic.frag.glsl")
+	g.sprite = render.CreateSprite("gopog.png")
 }
 func (g *Gopher) Update() {
 	g.Transform.Rotate(0, 0, 0.025)
 }
 func (g *Gopher) Draw() {
-	//TODO: switching programs every time is slow.
-	//cache draw calls & batch by program, then draw all at once during actors.Draw()
-	//TODO: Draw() should not be part of actors
-	g.program.BindBuffer("position", render.Quad.Position)
-	g.program.BindBuffer("texcoord", render.Quad.TexCoord)
-	g.program.Uniform("tex", render.Texture2D("gopog.png", false))
-	g.program.Uniform("MVP", render.MvpFromTransform(g.Transform, render.View, render.Projection))
-	g.program.Draw()
+	g.sprite.Draw(g.Transform.Mat4())
 }
 func (g *Gopher) Destroy() {}
-
-
 
 //go:embed resources
 var Resources embed.FS
@@ -98,17 +90,16 @@ func main() {
 	gl.DepthFunc(gl.LESS)
 	gl.Viewport(0, 0, int32(width), int32(height))
 
-
 	render.Projection = Perspective(DegToRad(60.0), float32(width)/float32(height), 0.1, 1000.0)
 	render.View = Ident4()
 
 	cameraPos := Vec3{0, 0, 2}
 
-	fmt.Println("starting...")
+	fmt.Println("Starting...")
 
 	for i := 0; i < 3; i++ {
-		g := &Gopher{Transform: render.Origin}
-		g.Transform.Translate(float32(i), 0, float32(i) / 30.0)
+		g := &Gopher{Transform: transform.Origin}
+		g.Transform.Translate(float32(i), 0, float32(i)/30.0)
 		actors.Spawn(g)
 	}
 
@@ -145,7 +136,12 @@ func main() {
 
 		render.View = LookAtV(cameraPos, cameraPos.Add(Vec3{0, 0, -1}), Vec3{0, 1, 0})
 
-		actors.Draw()
+		actors.All(func(a actors.Actor) {
+			if r, ok := a.(render.Render); ok {
+				r.Draw()
+			}
+		})
+		render.DrawSprites()
 
 		window.GLSwap()
 	}

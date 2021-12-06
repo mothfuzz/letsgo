@@ -1,7 +1,7 @@
 package actors
 
 import (
-	//"fmt"
+//"fmt"
 )
 
 type ActorId struct {
@@ -10,7 +10,6 @@ type ActorId struct {
 type Actor interface {
 	Init()
 	Update()
-	Draw()
 	Destroy()
 }
 
@@ -26,13 +25,15 @@ func Spawn(a Actor) ActorId {
 }
 
 func Update() {
-	for _, a := range(actorsMap) {
+	for _, a := range actorsMap {
 		a.Update()
 	}
 }
-func Draw() {
-	for _, a := range(actorsMap) {
-		a.Draw()
+
+//run systems across all actors.
+func All(f func(Actor)) {
+	for _, a := range actorsMap {
+		f(a)
 	}
 }
 
@@ -49,13 +50,13 @@ func DestroyId(id ActorId) {
 }
 
 func Quit() {
-	for _, a := range(actorsMap) {
+	for _, a := range actorsMap {
 		a.Destroy()
 	}
 }
 
 func GetId(a Actor) (ActorId, bool) {
-	for id, aa := range(actorsMap) {
+	for id, aa := range actorsMap {
 		if aa == a {
 			return id, true
 		}

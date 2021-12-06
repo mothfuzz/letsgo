@@ -163,17 +163,22 @@ func (p *Program) BufferData(name string, data []float32) {
 		p.draw_size = int32(len(data)) / (attr.size * int32(attr.rows))
 	}
 }
+
+//for long-lived quick-swap storage i.e. for models & such
 type Buffer struct {
-	Data []float32
+	Data   []float32
 	buffer uint32
 }
+
 func (p *Program) BindBuffer(name string, buffer *Buffer) {
 	if buffer.buffer == 0 {
+		//send buffer to GPU if not already
 		gl.GenBuffers(1, &buffer.buffer)
 		gl.BindBuffer(gl.ARRAY_BUFFER, buffer.buffer)
 		gl.BufferData(gl.ARRAY_BUFFER, len(buffer.Data)*4, gl.Ptr(buffer.Data), gl.STATIC_DRAW)
 	}
 	if attr, ok := p.attributes[name]; ok {
+		//replace the default attribute buffer
 		attr.buffer = buffer.buffer
 		p.attributes[name] = attr
 		p.draw_size = int32(len(buffer.Data)) / (attr.size * int32(attr.rows))
