@@ -43,7 +43,7 @@ func main() {
 
 	render.Resources = Resources
 
-	var width, height int32 = 800, 600
+	var width, height int32 = 1920, 1080
 	var window *sdl.Window
 	var context sdl.GLContext
 	var event sdl.Event
@@ -62,7 +62,7 @@ func main() {
 	window, err = sdl.CreateWindow("owo",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		width, height,
-		sdl.WINDOW_OPENGL)
+		sdl.WINDOW_FULLSCREEN|sdl.WINDOW_OPENGL)
 	if err != nil {
 		panic(err)
 	}
@@ -104,11 +104,13 @@ func main() {
 	}
 
 	timer := sdl.GetTicks()
-	ticks_passed := uint32(0)
+	frame_ticks_passed := uint32(0)
+	update_ticks_passed := uint32(0)
 	frames_passed := 0
 
 	running = true
 	for running {
+		//TODO: input manager for actors to poll
 		for event = sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
 			case *sdl.QuitEvent:
@@ -120,18 +122,24 @@ func main() {
 			}
 		}
 
-		actors.Update()
-
 		now := sdl.GetTicks()
-		ticks_passed += now - timer
+		frame_ticks_passed += now - timer
+		update_ticks_passed += now - timer
 		frames_passed += 1
 		timer = now
-		if ticks_passed > 1000 {
+		if frame_ticks_passed > 1000 {
 			window.SetTitle(strconv.Itoa(int(frames_passed)))
-			ticks_passed = 0
+			frame_ticks_passed = 0
 			frames_passed = 0
 		}
 
+		//fixed timestep of 125fps for updates for the smooth
+		if update_ticks_passed > 8 {
+			actors.Update()
+			update_ticks_passed = 0
+		}
+
+		//rendering at...  however fast it can go
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 		render.View = LookAtV(cameraPos, cameraPos.Add(Vec3{0, 0, -1}), Vec3{0, 1, 0})
