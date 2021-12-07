@@ -43,7 +43,7 @@ func main() {
 
 	render.Resources = Resources
 
-	var width, height int32 = 1920, 1080
+	var width, height int32 = 800, 600
 	var window *sdl.Window
 	var context sdl.GLContext
 	var event sdl.Event
@@ -62,7 +62,7 @@ func main() {
 	window, err = sdl.CreateWindow("owo",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		width, height,
-		sdl.WINDOW_FULLSCREEN|sdl.WINDOW_OPENGL)
+		sdl.WINDOW_OPENGL)
 	if err != nil {
 		panic(err)
 	}
@@ -104,9 +104,9 @@ func main() {
 	}
 
 	timer := sdl.GetTicks()
-	frame_ticks_passed := uint32(0)
-	update_ticks_passed := uint32(0)
-	frames_passed := 0
+	frameTicks := uint32(0)
+	updateTicks := uint32(0)
+	framesPassed := 0
 
 	running = true
 	for running {
@@ -123,20 +123,20 @@ func main() {
 		}
 
 		now := sdl.GetTicks()
-		frame_ticks_passed += now - timer
-		update_ticks_passed += now - timer
-		frames_passed += 1
+		frameTicks += now - timer
+		updateTicks += now - timer
+		framesPassed += 1
 		timer = now
-		if frame_ticks_passed > 1000 {
-			window.SetTitle(strconv.Itoa(int(frames_passed)))
-			frame_ticks_passed = 0
-			frames_passed = 0
+		if frameTicks > 1000 {
+			window.SetTitle(strconv.Itoa(int(framesPassed)))
+			frameTicks = 0
+			framesPassed = 0
 		}
 
 		//fixed timestep of 125fps for updates for the smooth
-		if update_ticks_passed > 8 {
+		if updateTicks > 8 {
 			actors.Update()
-			update_ticks_passed = 0
+			updateTicks = 0
 		}
 
 		//rendering at...  however fast it can go
