@@ -28,7 +28,8 @@ func (g *Gopher) Init() {
 	g.sprite = render.CreateSprite("gopog.png")
 }
 func (g *Gopher) Update() {
-	g.Transform.Rotate(0, 0, 0.025)
+	//TODO: transform via quats
+	g.Transform.Rotate(0, 0.025, 0) //0.025)
 }
 func (g *Gopher) Draw() {
 	g.sprite.Draw(g.Transform.Mat4())
@@ -43,7 +44,7 @@ func main() {
 
 	render.Resources = Resources
 
-	var width, height int32 = 800, 600
+	var width, height int32 = 320, 240
 	var window *sdl.Window
 	var context sdl.GLContext
 	var event sdl.Event
@@ -80,7 +81,7 @@ func main() {
 
 	fmt.Println(gl.GoStr(gl.GetString(gl.VERSION)))
 
-	gl.Enable(gl.CULL_FACE)
+	gl.Disable(gl.CULL_FACE)
 	gl.CullFace(gl.BACK)
 	gl.FrontFace(gl.CW)
 	gl.Enable(gl.BLEND)
