@@ -16,9 +16,47 @@ func (t *Transform) Translate(x, y, z float32) {
 	t.position[1] += y
 	t.position[2] += z
 }
+func (t *Transform) Translate2D(x, y float32) {
+	t.position[0] += x
+	t.position[1] += y
+}
+func (t *Transform) SetPosition(x, y, z float32) {
+	t.position[0] = x
+	t.position[1] = y
+	t.position[2] = z
+}
+func (t *Transform) SetPosition2D(x, y float32) {
+	t.position[0] = x
+	t.position[1] = y
+}
 func (t *Transform) Rotate(x, y, z float32) {
 	q := AnglesToQuat(x, y, z, XYZ)
 	t.rotation = t.rotation.Mul(q)
+}
+func (t *Transform) Rotate2D(a float32) {
+	q := AnglesToQuat(0, 0, a, XYZ)
+	t.rotation = t.rotation.Mul(q)
+}
+func (t *Transform) SetRotation2D(a float32) {
+	t.rotation = AnglesToQuat(0, 0, a, XYZ)
+}
+func (t *Transform) Scale(x, y, z float32) {
+	t.scale[0] += x
+	t.scale[1] += y
+	t.scale[2] += z
+}
+func (t *Transform) Scale2D(x, y float32) {
+	t.scale[0] += x
+	t.scale[1] += y
+}
+func (t *Transform) SetScale(x, y, z float32) {
+	t.scale[0] = x
+	t.scale[1] = y
+	t.scale[2] = z
+}
+func (t *Transform) SetScale2D(x, y float32) {
+	t.scale[0] = x
+	t.scale[1] = y
 }
 
 func (t *Transform) Mat4() Mat4 {
@@ -30,6 +68,10 @@ func (t *Transform) Mat4() Mat4 {
 }
 
 var Origin Transform = Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{1, 1, 1}}
+
+func Origin2D(w int, h int) Transform {
+	return Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{float32(w), float32(h), 1}}
+}
 
 func MvpFromTransform(t Transform, v, p Mat4) [16]float32 {
 	m := t.Mat4()

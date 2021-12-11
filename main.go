@@ -6,9 +6,11 @@ import (
 	"runtime"
 	"strconv"
 
-	//"math"
 	"dyndraw/framework/actors"
+	"dyndraw/framework/input"
 	_ "embed"
+	"math"
+
 	//"dyndraw/framework/events"
 	"dyndraw/framework/render"
 	"dyndraw/framework/transform"
@@ -28,8 +30,13 @@ func (g *Gopher) Init() {
 	g.sprite = render.CreateSprite("gopog.png")
 }
 func (g *Gopher) Update() {
-	//TODO: transform via quats
-	g.Transform.Rotate(0, 0.025, 0) //0.025)
+	if input.IsKeyDown("r") {
+		g.Transform.Rotate(0, 0.025, 0)
+		//g.Transform.Rotate2D(0.025)
+	}
+	x, y := input.GetMousePosition()
+	fmt.Println(x, y)
+	g.Transform.SetPosition2D(float32(x), float32(y))
 }
 func (g *Gopher) Draw() {
 	g.sprite.Draw(g.Transform.Mat4())
@@ -94,12 +101,13 @@ func main() {
 	render.Projection = Perspective(DegToRad(60.0), float32(width)/float32(height), 0.1, 1000.0)
 	render.View = Ident4()
 
-	cameraPos := Vec3{0, 0, 2}
+	z2D := math.Sqrt(math.Pow(float64(height), 2) - math.Pow(float64(height)/2.0, 2))
+	cameraPos := Vec3{float32(width) / 2, float32(height) / 2, -float32(z2D)}
 
 	fmt.Println("Starting...")
 
 	for i := 0; i < 3; i++ {
-		g := &Gopher{Transform: transform.Origin}
+		g := &Gopher{Transform: transform.Origin2D(32, 32)}
 		g.Transform.Translate(float32(i), 0, float32(i)/30.0)
 		actors.Spawn(g)
 	}
@@ -111,7 +119,6 @@ func main() {
 
 	running = true
 	for running {
-		//TODO: input manager for actors to poll
 		for event = sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch t := event.(type) {
 			case *sdl.QuitEvent:
@@ -143,7 +150,7 @@ func main() {
 		//rendering at...  however fast it can go
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-		render.View = LookAtV(cameraPos, cameraPos.Add(Vec3{0, 0, -1}), Vec3{0, 1, 0})
+		render.View = LookAtV(cameraPos, cameraPos.Add(Vec3{0, 0, 1}), Vec3{0, -1, 0})
 
 		actors.All(func(a actors.Actor) {
 			if r, ok := a.(render.Render); ok {
