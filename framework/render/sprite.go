@@ -5,52 +5,43 @@ import (
 	. "github.com/go-gl/mathgl/mgl32"
 )
 
-type Sprite struct {
-	model Mat4
-}
-
-func (s *Sprite) Draw(m Mat4) {
-	//this doesn't actually draw anything.
-	s.model = m
-}
-
 type SpriteBatch struct {
-	program *Program
-	sprites map[string][]*Sprite
+	program   *Program
+	drawCalls map[string][]Mat4
 }
 
-func (sb *SpriteBatch) CreateSprite(image string) *Sprite {
+func (sb *SpriteBatch) DrawSprite(image string, model Mat4) {
 	if sb.program == nil {
 		sb.program = CreateProgram("basic.vert.glsl", "basic.frag.glsl")
 		sb.program.BindBuffer("position", Quad.Position)
 		sb.program.BindBuffer("texcoord", Quad.TexCoord)
 	}
-	if sb.sprites == nil {
-		sb.sprites = map[string][]*Sprite{}
+	if sb.drawCalls == nil {
+		sb.drawCalls = map[string][]Mat4{}
 	}
-	sprite := new(Sprite)
-	sprite.model = Ident4()
-	sb.sprites[image] = append(sb.sprites[image], sprite)
-	return sprite
+	sb.drawCalls[image] = append(sb.drawCalls[image], model)
 }
 func (sb *SpriteBatch) Draw() {
 	sb.program.LoadAttributes()
-	for image, spriteBatch := range defaultSpriteBatch.sprites {
+	for image, models := range defaultSpriteBatch.drawCalls {
 		sb.program.Uniform("tex", Texture2D(image, false))
-		for _, sprite := range spriteBatch {
-			mv := View.Mul4(sprite.model)
+		for _, model := range models {
+			mv := View.Mul4(model)
 			mvp := Projection.Mul4(mv)
 			sb.program.Uniform("MVP", [16]float32(mvp))
 			sb.program.DrawArrays()
 		}
 		sb.program.ClearTextureUnits()
 	}
+	for k := range sb.drawCalls {
+		delete(sb.drawCalls, k)
+	}
 }
 
 var defaultSpriteBatch = SpriteBatch{}
 
-func CreateSprite(image string) *Sprite {
-	return defaultSpriteBatch.CreateSprite(image)
+func DrawSprite(image string, model Mat4) {
+	defaultSpriteBatch.DrawSprite(image, model)
 }
 func DrawSprites() {
 	defaultSpriteBatch.Draw()

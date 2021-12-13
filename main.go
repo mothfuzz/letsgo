@@ -23,23 +23,20 @@ import (
 //testing out rendering pipeline within an actor context
 type Gopher struct {
 	transform.Transform
-	sprite *render.Sprite
 }
 
-func (g *Gopher) Init() {
-	g.sprite = render.CreateSprite("gopog.png")
-}
+func (g *Gopher) Init() {}
 func (g *Gopher) Update() {
 	if input.IsKeyDown("r") {
-		g.Transform.Rotate(0, 0.025, 0)
-		//g.Transform.Rotate2D(0.025)
+		//g.Transform.Rotate(0, 0.025, 0)
+		g.Transform.Rotate2D(0.025)
 	}
 	x, y := input.GetMousePosition()
-	fmt.Println(x, y)
+	//fmt.Println(x, y)
 	g.Transform.SetPosition2D(float32(x), float32(y))
 }
 func (g *Gopher) Draw() {
-	g.sprite.Draw(g.Transform.Mat4())
+	render.DrawSprite("gopog.png", g.Transform.Mat4())
 }
 func (g *Gopher) Destroy() {}
 
@@ -51,7 +48,7 @@ func main() {
 
 	render.Resources = Resources
 
-	var width, height int32 = 320, 240
+	var width, height int32 = 800, 600
 	var window *sdl.Window
 	var context sdl.GLContext
 	var event sdl.Event
@@ -107,8 +104,8 @@ func main() {
 	fmt.Println("Starting...")
 
 	for i := 0; i < 3; i++ {
-		g := &Gopher{Transform: transform.Origin2D(32, 32)}
-		g.Transform.Translate(float32(i), 0, float32(i)/30.0)
+		g := &Gopher{Transform: transform.Origin2D(64, 64)}
+		g.Transform.Translate(float32(i)*64.0, 0, float32(i)*100.0)
 		actors.Spawn(g)
 	}
 
