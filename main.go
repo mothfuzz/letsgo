@@ -49,6 +49,7 @@ type CameraController struct {
 
 func (c *CameraController) Init() {
 	c.Camera.Init2D(320, 240)
+	c.Transform = transform.Origin()
 	c.Transform.SetPosition(160, 120, -c.Camera.GetZ2D())
 	render.ActiveCamera = &c.Camera
 }
