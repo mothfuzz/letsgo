@@ -28,6 +28,7 @@ type Program struct {
 }
 
 func (p *Program) loadShaders(vert_file string, frag_file string) {
+	fmt.Printf("loading shaders: %s/%s\n", vert_file, frag_file)
 	//load & compile the shaders
 	vert_shader := gl.CreateShader(gl.VERTEX_SHADER)
 	vert_source, err := Resources.ReadFile("resources/shaders/" + vert_file)
