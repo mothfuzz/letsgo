@@ -93,7 +93,7 @@ func main() {
 		actors.Spawn(g)
 	}
 
-	actors.Spawn(&CameraController{transform.Origin(), render.Camera{}})
+	actors.Spawn(&CameraController{})
 
 	for app.PollEvents() {
 		app.Update()
