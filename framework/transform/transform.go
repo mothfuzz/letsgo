@@ -67,7 +67,9 @@ func (t *Transform) Mat4() Mat4 {
 	return m
 }
 
-var Origin Transform = Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{1, 1, 1}}
+func Origin() Transform {
+	return Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{1, 1, 1}}
+}
 
 func Origin2D(w int, h int) Transform {
 	return Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{float32(w), float32(h), 1}}

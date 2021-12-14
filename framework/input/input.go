@@ -10,6 +10,40 @@ func IsKeyDown(name string) bool {
 	return keystate[int(sdl.GetScancodeFromName(name))] != 0
 }
 
+var keysPressed = map[sdl.Scancode]bool{}
+var keysReleased = map[sdl.Scancode]bool{}
+
+func IsKeyPressed(name string) bool {
+	keystate := sdl.GetKeyboardState()
+	sc := sdl.GetScancodeFromName(name)
+	if keystate[int(sc)] != 0 {
+		if keysPressed[sc] {
+			return false
+		} else {
+			keysPressed[sc] = true
+			return true
+		}
+	} else {
+		keysPressed[sc] = false
+		return false
+	}
+}
+func IsKeyReleased(name string) bool {
+	keystate := sdl.GetKeyboardState()
+	sc := sdl.GetScancodeFromName(name)
+	if keystate[int(sc)] == 0 {
+		if !keysReleased[sc] {
+			return false
+		} else {
+			keysReleased[sc] = false
+			return true
+		}
+	} else {
+		keysReleased[sc] = true
+		return false
+	}
+}
+
 func IsMouseButtonDown(button string) bool {
 	_, _, mousestate := sdl.GetMouseState()
 	switch button {

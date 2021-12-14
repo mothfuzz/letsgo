@@ -10,6 +10,8 @@ import (
 	"dyndraw/framework/input"
 	_ "embed"
 	"math"
+	"math/rand"
+	"time"
 
 	//"dyndraw/framework/events"
 	"dyndraw/framework/render"
@@ -31,9 +33,16 @@ func (g *Gopher) Update() {
 		//g.Transform.Rotate(0, 0.025, 0)
 		g.Transform.Rotate2D(0.025)
 	}
-	x, y := input.GetMousePosition()
+	if input.IsKeyReleased("h") {
+		x := rand.Float32() * 320.0
+		y := rand.Float32() * 240.0
+		t := transform.Origin2D(16, 16)
+		t.Translate2D(x, y)
+		actors.Spawn(&Gopher{t})
+	}
+	//x, y := input.GetMousePosition()
 	//fmt.Println(x, y)
-	g.Transform.SetPosition2D(float32(x), float32(y))
+	//g.Transform.SetPosition2D(float32(x), float32(y))
 }
 func (g *Gopher) Draw() {
 	render.DrawSprite("gopog.png", g.Transform.Mat4())
@@ -45,10 +54,11 @@ var Resources embed.FS
 
 func main() {
 	runtime.LockOSThread()
+	rand.Seed(time.Now().UnixNano())
 
 	render.Resources = Resources
 
-	var width, height int32 = 800, 600
+	var width, height int32 = 320, 240
 	var window *sdl.Window
 	var context sdl.GLContext
 	var event sdl.Event
@@ -104,7 +114,7 @@ func main() {
 	fmt.Println("Starting...")
 
 	for i := 0; i < 3; i++ {
-		g := &Gopher{Transform: transform.Origin2D(64, 64)}
+		g := &Gopher{Transform: transform.Origin2D(32, 32)}
 		g.Transform.Translate(float32(i)*64.0, 0, float32(i)*100.0)
 		actors.Spawn(g)
 	}
