@@ -49,7 +49,7 @@ func DestroyId(id ActorId) {
 	}
 }
 
-func Quit() {
+func DestroyAll() {
 	for _, a := range actorsMap {
 		a.Destroy()
 	}

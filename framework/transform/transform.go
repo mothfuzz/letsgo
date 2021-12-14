@@ -11,6 +11,16 @@ type Transform struct {
 	scale    Vec3
 }
 
+func (t *Transform) GetPositionV() Vec3 {
+	return t.position
+}
+func (t *Transform) GetRotationQ() Quat {
+	return t.rotation
+}
+func (t *Transform) GetScaleV() Vec3 {
+	return t.scale
+}
+
 func (t *Transform) Translate(x, y, z float32) {
 	t.position[0] += x
 	t.position[1] += y

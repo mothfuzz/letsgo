@@ -26,8 +26,8 @@ func (sb *SpriteBatch) Draw() {
 	for image, models := range defaultSpriteBatch.drawCalls {
 		sb.program.Uniform("tex", Texture2D(image, false))
 		for _, model := range models {
-			mv := View.Mul4(model)
-			mvp := Projection.Mul4(mv)
+			mv := ActiveCamera.GetView().Mul4(model)
+			mvp := ActiveCamera.GetProjection().Mul4(mv)
 			sb.program.Uniform("MVP", [16]float32(mvp))
 			sb.program.DrawArrays()
 		}

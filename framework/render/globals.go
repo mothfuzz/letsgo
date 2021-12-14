@@ -1,14 +1,9 @@
 package render
 
-import (
-	//"fmt"
-	. "github.com/go-gl/mathgl/mgl32"
-)
-
 var (
-	View       Mat4 = Ident4()
-	Projection Mat4 = Ident4()
-	Quad            = struct {
+	DefaultCamera = Camera{}
+	ActiveCamera  = &DefaultCamera
+	Quad          = struct {
 		Position *Buffer
 		TexCoord *Buffer
 	}{
