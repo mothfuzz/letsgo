@@ -11,17 +11,17 @@ type SpriteBatch struct {
 }
 
 func (sb *SpriteBatch) DrawSprite(image string, model Mat4) {
-	if sb.program == nil {
-		sb.program = CreateProgram("basic.vert.glsl", "basic.frag.glsl")
-		sb.program.BindBuffer("position", Quad.Position)
-		sb.program.BindBuffer("texcoord", Quad.TexCoord)
-	}
 	if sb.drawCalls == nil {
 		sb.drawCalls = map[string][]Mat4{}
 	}
 	sb.drawCalls[image] = append(sb.drawCalls[image], model)
 }
 func (sb *SpriteBatch) Draw() {
+	if sb.program == nil {
+		sb.program = CreateProgram("basic.vert.glsl", "basic.frag.glsl")
+		sb.program.BindBuffer("position", Quad.Position)
+		sb.program.BindBuffer("texcoord", Quad.TexCoord)
+	}
 	sb.program.LoadAttributes()
 	for image, models := range defaultSpriteBatch.drawCalls {
 		sb.program.Uniform("tex", Texture2D(image, false))
