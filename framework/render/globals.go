@@ -3,7 +3,8 @@ package render
 var (
 	DefaultCamera = Camera{}
 	ActiveCamera  = &DefaultCamera
-	Quad          = struct {
+	//it's useful to have a default Quad because lots of things are rectangles.
+	Quad = struct {
 		Position *Buffer
 		TexCoord *Buffer
 	}{

@@ -17,6 +17,7 @@ import (
 //testing out rendering pipeline within an actor context
 type Gopher struct {
 	transform.Transform
+	animationIndex int
 }
 
 func (g *Gopher) Init() {}
@@ -30,14 +31,18 @@ func (g *Gopher) Update() {
 		y := rand.Float32() * 240.0
 		t := transform.Origin2D(16, 16)
 		t.Translate2D(x, y)
-		actors.Spawn(&Gopher{t})
+		actors.Spawn(&Gopher{t, 0})
+	}
+	if input.IsKeyDown("g") {
+		g.animationIndex += 1
+		g.animationIndex %= 3
 	}
 	//x, y := input.GetMousePosition()
 	//fmt.Println(x, y)
 	//g.Transform.SetPosition2D(float32(x), float32(y))
 }
 func (g *Gopher) Draw() {
-	render.DrawSprite("gopog.png", g.Transform.Mat4())
+	render.DrawSpriteAnimated("gopog.png", g.Transform.Mat4(), render.AnimateTexCoords(3, 1, g.animationIndex))
 }
 func (g *Gopher) Destroy() {}
 
