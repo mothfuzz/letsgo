@@ -2,17 +2,16 @@ package main
 
 import (
 	"embed"
-
-	"dyndraw/framework/actors"
-	"dyndraw/framework/input"
-	_ "embed"
 	"math/rand"
 	"time"
 
-	"dyndraw/framework/app"
-	//"dyndraw/framework/events"
-	"dyndraw/framework/render"
-	"dyndraw/framework/transform"
+	"github.com/mothfuzz/dyndraw/framework/actors"
+	"github.com/mothfuzz/dyndraw/framework/input"
+
+	"github.com/mothfuzz/dyndraw/framework/app"
+	//"github.com/mothfuzz/dyndraw/framework/events"
+	"github.com/mothfuzz/dyndraw/framework/render"
+	"github.com/mothfuzz/dyndraw/framework/transform"
 )
 
 //testing out rendering pipeline within an actor context
@@ -83,10 +82,9 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	render.Resources = Resources
-	var width, height int32 = 320, 240
 	app.Init()
 	defer app.Quit()
-	app.SetWindowSize(width, height)
+	app.SetWindowSize(320, 240)
 
 	for i := 0; i < 8100; i++ {
 		g := &Gopher{Transform: transform.Origin2D(32, 32)}

@@ -1,11 +1,12 @@
 package app
 
 import (
-	"dyndraw/framework/actors"
-	"dyndraw/framework/render"
 	"fmt"
 	"runtime"
 	"strconv"
+
+	"github.com/mothfuzz/dyndraw/framework/actors"
+	"github.com/mothfuzz/dyndraw/framework/render"
 
 	gl "github.com/go-gl/gl/v3.1/gles2"
 	"github.com/veandco/go-sdl2/sdl"
