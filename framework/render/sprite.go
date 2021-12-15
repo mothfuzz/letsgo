@@ -36,8 +36,8 @@ func (sb *SpriteBatch) Draw() {
 		sb.program.Uniform("tex", Texture2D(image, false))
 		for _, sprite := range sprites {
 			if sprite.texcoords == nil {
-				//use preexisting quad (fastest case)
-				sb.program.BindBuffer("texcoord", Quad.TexCoord)
+				//use preexisting quad
+				sb.program.BufferData("texcoord", Quad.TexCoord.Data)
 			} else {
 				//if animated, upload animated texcoords
 				sb.program.BufferData("texcoord", sprite.texcoords)
