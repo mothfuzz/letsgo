@@ -8,7 +8,7 @@ import (
 //internal sprite drawcall format
 type drawCall struct {
 	model     Mat4
-	texcoords []float32
+	texcoords *Buffer
 }
 
 type SpriteBatch struct {
@@ -22,9 +22,9 @@ func (sb *SpriteBatch) DrawSprite(image string, model Mat4) {
 	}
 	sb.drawCalls[image] = append(sb.drawCalls[image], drawCall{model, nil})
 }
-func (sb *SpriteBatch) DrawSpriteAnimated(image string, model Mat4, texcoords []float32) {
+func (sb *SpriteBatch) DrawSpriteAnimated(image string, model Mat4, texcoords Buffer) {
 	sb.DrawSprite(image, model)
-	sb.drawCalls[image][len(sb.drawCalls[image])-1].texcoords = texcoords
+	sb.drawCalls[image][len(sb.drawCalls[image])-1].texcoords = &texcoords
 }
 func (sb *SpriteBatch) Draw() {
 	if sb.program == nil {
@@ -36,11 +36,11 @@ func (sb *SpriteBatch) Draw() {
 		sb.program.Uniform("tex", Texture2D(image, false))
 		for _, sprite := range sprites {
 			if sprite.texcoords == nil {
-				//use preexisting quad
-				sb.program.BufferData("texcoord", Quad.TexCoord.Data)
+				//if nonanimated, use preexisting quad
+				sb.program.BindBuffer("texcoord", Quad.TexCoord)
 			} else {
-				//if animated, upload animated texcoords
-				sb.program.BufferData("texcoord", sprite.texcoords)
+				//if animated, use dynamically generated buffer
+				sb.program.BindBuffer("texcoord", sprite.texcoords)
 			}
 			mv := ActiveCamera.GetView().Mul4(sprite.model)
 			mvp := ActiveCamera.GetProjection().Mul4(mv)
@@ -59,21 +59,40 @@ var defaultSpriteBatch = SpriteBatch{}
 func DrawSprite(image string, model Mat4) {
 	defaultSpriteBatch.DrawSprite(image, model)
 }
-func DrawSpriteAnimated(image string, model Mat4, texcoords []float32) {
+func DrawSpriteAnimated(image string, model Mat4, texcoords Buffer) {
 	defaultSpriteBatch.DrawSpriteAnimated(image, model, texcoords)
 }
 func DrawSprites() {
 	defaultSpriteBatch.Draw()
 }
 
-func AnimateTexCoords(framesW, framesH int, index int) []float32 {
-	newCoords := make([]float32, len(Quad.TexCoord.Data))
-	copy(newCoords, Quad.TexCoord.Data)
-	for i := 0; i < len(newCoords)-1; i += 2 {
-		newCoords[i] /= float32(framesW)
-		newCoords[i+1] /= float32(framesH)
-		newCoords[i] += float32(index%framesW) / float32(framesW)
-		newCoords[i+1] += float32(index/framesW) / float32(framesH)
+type SpriteAnimation struct {
+	Frames  [][]float32
+	Tags    map[string][]int
+	buffers []Buffer
+}
+
+func (s *SpriteAnimation) GetTexCoords(tag string, frame int) Buffer {
+	if s.buffers == nil {
+		//generate proper texcoords for the quad, store in buffer for reuse
+		s.buffers = make([]Buffer, len(s.Frames))
+		for f := range s.buffers {
+			b := &s.buffers[f]
+			b.Data = make([]float32, len(Quad.TexCoord.Data))
+			copy(b.Data, Quad.TexCoord.Data)
+			for i := 0; i < len(b.Data)-1; i += 2 {
+				if b.Data[i] == 0 {
+					b.Data[i] = s.Frames[f][0]
+				} else {
+					b.Data[i] = s.Frames[f][0] + s.Frames[f][2]
+				}
+				if b.Data[i+1] == 0 {
+					b.Data[i+1] = s.Frames[f][1]
+				} else {
+					b.Data[i+1] = s.Frames[f][1] + s.Frames[f][3]
+				}
+			}
+		}
 	}
-	return newCoords
+	return s.buffers[s.Tags[tag][frame]]
 }

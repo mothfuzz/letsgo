@@ -167,8 +167,9 @@ func (p *Program) BufferData(name string, data []float32) {
 }
 
 //for long-lived quick-swap storage i.e. for models & such
+type Data []float32
 type Buffer struct {
-	Data   []float32
+	Data
 	buffer uint32
 }
 
@@ -178,9 +179,10 @@ func (p *Program) BindBuffer(name string, buffer *Buffer) {
 		gl.GenBuffers(1, &buffer.buffer)
 		gl.BindBuffer(gl.ARRAY_BUFFER, buffer.buffer)
 		gl.BufferData(gl.ARRAY_BUFFER, len(buffer.Data)*4, gl.Ptr(buffer.Data), gl.STATIC_DRAW)
+		//it lives there now
 	}
 	if attr, ok := p.attributes[name]; ok {
-		//replace the default attribute buffer
+		//replace the default attribute buffer (never to be seen again)
 		attr.buffer = buffer.buffer
 		p.attributes[name] = attr
 		p.draw_size = int32(len(buffer.Data)) / (attr.size * int32(attr.rows))

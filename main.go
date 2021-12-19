@@ -17,10 +17,22 @@ import (
 //testing out rendering pipeline within an actor context
 type Gopher struct {
 	transform.Transform
+	render.SpriteAnimation
 	animationIndex int
 }
 
-func (g *Gopher) Init() {}
+func (g *Gopher) Init() {
+	g.SpriteAnimation = render.SpriteAnimation{
+		Frames: [][]float32{
+			{0.0 / 3.0, 0, 1.0 / 3.0, 1},
+			{1.0 / 3.0, 0, 1.0 / 3.0, 1},
+			{2.0 / 3.0, 0, 1.0 / 3.0, 1},
+		},
+		Tags: map[string][]int{
+			"idle": {0, 1, 2},
+		},
+	}
+}
 func (g *Gopher) Update() {
 	if input.IsKeyDown("r") {
 		//g.Transform.Rotate(0, 0.025, 0)
@@ -31,18 +43,16 @@ func (g *Gopher) Update() {
 		y := rand.Float32() * 240.0
 		t := transform.Origin2D(16, 16)
 		t.Translate2D(x, y)
-		actors.Spawn(&Gopher{t, 0})
+		actors.Spawn(&Gopher{Transform: t})
 	}
 	if input.IsKeyDown("g") {
 		g.animationIndex += 1
 		g.animationIndex %= 3
 	}
-	//x, y := input.GetMousePosition()
-	//fmt.Println(x, y)
-	//g.Transform.SetPosition2D(float32(x), float32(y))
 }
 func (g *Gopher) Draw() {
-	render.DrawSpriteAnimated("gopog.png", g.Transform.Mat4(), render.AnimateTexCoords(3, 1, g.animationIndex))
+	render.DrawSpriteAnimated("gopog.png", g.Transform.Mat4(), g.SpriteAnimation.GetTexCoords("idle", g.animationIndex))
+	//render.DrawSprite("gopog.png", g.Transform.Mat4())
 }
 func (g *Gopher) Destroy() {}
 
@@ -91,7 +101,7 @@ func main() {
 	defer app.Quit()
 	app.SetWindowSize(320, 240)
 
-	for i := 0; i < 8100; i++ {
+	for i := 0; i < 4; i++ {
 		g := &Gopher{Transform: transform.Origin2D(32, 32)}
 		g.Transform.Translate(float32(i)*64.0, 120, float32(i)*100.0)
 		actors.Spawn(g)
