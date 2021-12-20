@@ -53,13 +53,13 @@ func Init() {
 
 	fmt.Println(gl.GoStr(gl.GetString(gl.VERSION)))
 
-	gl.Enable(gl.CULL_FACE)
+	gl.Disable(gl.CULL_FACE)
 	gl.CullFace(gl.BACK)
 	gl.FrontFace(gl.CCW)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.Enable(gl.DEPTH_TEST)
-	gl.DepthFunc(gl.LESS)
+	gl.DepthFunc(gl.LEQUAL)
 	gl.ClearColor(0.2, 0.2, 0.3, 1.0)
 	gl.Viewport(0, 0, w, h)
 
