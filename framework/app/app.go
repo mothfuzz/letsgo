@@ -53,14 +53,14 @@ func Init() {
 
 	fmt.Println(gl.GoStr(gl.GetString(gl.VERSION)))
 
-	gl.Disable(gl.CULL_FACE)
+	gl.Enable(gl.CULL_FACE)
 	gl.CullFace(gl.BACK)
-	gl.FrontFace(gl.CW)
+	gl.FrontFace(gl.CCW)
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.Enable(gl.DEPTH_TEST)
-	gl.ClearColor(0.2, 0.2, 0.3, 1.0)
 	gl.DepthFunc(gl.LESS)
+	gl.ClearColor(0.2, 0.2, 0.3, 1.0)
 	gl.Viewport(0, 0, w, h)
 
 	render.DefaultCamera.Init2D(w, h)

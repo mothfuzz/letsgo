@@ -14,7 +14,7 @@ type Camera struct {
 }
 
 func (c *Camera) SetViewSize(width, height int32) {
-	c.projection = Perspective(DegToRad(60.0), float32(width)/float32(height), 0.1, 1000.0)
+	c.projection = Perspective(DegToRad(60.0), float32(width)/float32(height), 1.0, 1000.0)
 	c.z2D = float32(math.Sqrt(math.Pow(float64(height), 2) - math.Pow(float64(height)/2.0, 2)))
 	c.width = width
 	c.height = height
