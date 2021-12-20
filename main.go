@@ -56,6 +56,28 @@ func (g *Gopher) Draw() {
 }
 func (g *Gopher) Destroy() {}
 
+type Friendly struct {
+	transform.Transform
+}
+
+func (f *Friendly) Init()    {}
+func (f *Friendly) Update()  {}
+func (f *Friendly) Destroy() {}
+func (f *Friendly) Draw() {
+	render.DrawSprite("friendly.png", f.Transform.Mat4())
+}
+
+type BnW struct {
+	transform.Transform
+}
+
+func (b *BnW) Init()    {}
+func (b *BnW) Update()  {}
+func (b *BnW) Destroy() {}
+func (b *BnW) Draw() {
+	render.DrawSprite("bnw.png", b.Transform.Mat4())
+}
+
 type CameraController struct {
 	transform.Transform
 	render.Camera
@@ -101,9 +123,19 @@ func main() {
 	defer app.Quit()
 	app.SetWindowSize(320, 240)
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i < 1; i++ {
 		g := &Gopher{Transform: transform.Origin2D(32, 32)}
 		g.Transform.Translate(float32(i)*64.0, 120, float32(i)*100.0)
+		actors.Spawn(g)
+	}
+	for i := 1; i < 2; i++ {
+		g := &Friendly{Transform: transform.Origin2D(32, 32)}
+		g.Transform.Translate(float32(i)*100.0, 120, float32(i)*64.0)
+		actors.Spawn(g)
+	}
+	for i := 2; i < 3; i++ {
+		g := &BnW{Transform: transform.Origin2D(32, 32)}
+		g.Transform.Translate(float32(i)*64.0, 120, float32(i)*-100.0)
 		actors.Spawn(g)
 	}
 

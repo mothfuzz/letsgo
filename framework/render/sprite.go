@@ -22,26 +22,26 @@ func (sb *SpriteBatch) DrawSprite(image string, model Mat4) {
 	}
 	sb.drawCalls[image] = append(sb.drawCalls[image], drawCall{model, nil})
 }
-func (sb *SpriteBatch) DrawSpriteAnimated(image string, model Mat4, texcoords Buffer) {
+func (sb *SpriteBatch) DrawSpriteAnimated(image string, model Mat4, texcoords *Buffer) {
 	sb.DrawSprite(image, model)
-	sb.drawCalls[image][len(sb.drawCalls[image])-1].texcoords = &texcoords
+	sb.drawCalls[image][len(sb.drawCalls[image])-1].texcoords = texcoords
 }
 func (sb *SpriteBatch) Draw() {
 	if sb.program == nil {
 		sb.program = CreateProgram("basic.vert.glsl", "basic.frag.glsl")
 		sb.program.BindBuffer("position", Quad.Position)
 	}
-	sb.program.LoadAttributes()
-	for image, sprites := range defaultSpriteBatch.drawCalls {
+	for image, sprites := range sb.drawCalls {
 		sb.program.Uniform("tex", Texture2D(image, false))
 		for _, sprite := range sprites {
 			if sprite.texcoords == nil {
-				//if nonanimated, use preexisting quad
+				//if not animated, use preexisting quad
 				sb.program.BindBuffer("texcoord", Quad.TexCoord)
 			} else {
 				//if animated, use dynamically generated buffer
 				sb.program.BindBuffer("texcoord", sprite.texcoords)
 			}
+			sb.program.LoadAttributes()
 			mv := ActiveCamera.GetView().Mul4(sprite.model)
 			mvp := ActiveCamera.GetProjection().Mul4(mv)
 			sb.program.Uniform("MVP", [16]float32(mvp))
@@ -59,7 +59,7 @@ var defaultSpriteBatch = SpriteBatch{}
 func DrawSprite(image string, model Mat4) {
 	defaultSpriteBatch.DrawSprite(image, model)
 }
-func DrawSpriteAnimated(image string, model Mat4, texcoords Buffer) {
+func DrawSpriteAnimated(image string, model Mat4, texcoords *Buffer) {
 	defaultSpriteBatch.DrawSpriteAnimated(image, model, texcoords)
 }
 func DrawSprites() {
@@ -72,7 +72,7 @@ type SpriteAnimation struct {
 	buffers []Buffer
 }
 
-func (s *SpriteAnimation) GetTexCoords(tag string, frame int) Buffer {
+func (s *SpriteAnimation) GetTexCoords(tag string, frame int) *Buffer {
 	if s.buffers == nil {
 		//generate proper texcoords for the quad, store in buffer for reuse
 		s.buffers = make([]Buffer, len(s.Frames))
@@ -94,5 +94,5 @@ func (s *SpriteAnimation) GetTexCoords(tag string, frame int) Buffer {
 			}
 		}
 	}
-	return s.buffers[s.Tags[tag][frame]]
+	return &s.buffers[s.Tags[tag][frame]]
 }
