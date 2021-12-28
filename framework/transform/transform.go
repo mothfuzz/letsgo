@@ -14,11 +14,26 @@ type Transform struct {
 func (t *Transform) GetPositionV() Vec3 {
 	return t.position
 }
+func (t *Transform) GetPosition() (float32, float32, float32) {
+	return t.position.Elem()
+}
+func (t *Transform) X() float32 {
+	return t.position.X()
+}
+func (t *Transform) Y() float32 {
+	return t.position.Y()
+}
+func (t *Transform) Z() float32 {
+	return t.position.Z()
+}
 func (t *Transform) GetRotationQ() Quat {
 	return t.rotation
 }
 func (t *Transform) GetScaleV() Vec3 {
 	return t.scale
+}
+func (t *Transform) GetScale() (float32, float32, float32) {
+	return t.scale.Elem()
 }
 
 func (t *Transform) Translate(x, y, z float32) {
