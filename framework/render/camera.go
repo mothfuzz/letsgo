@@ -26,8 +26,7 @@ func (c *Camera) Look(position Vec3, orientation Quat) {
 	c.view = LookAtV(position, center, Vec3{0, -1, 0})
 }
 func (c *Camera) Look2D(position Vec2) {
-	eye := Vec3{float32(c.width) / 2, float32(c.height) / 2, -float32(c.z2D)}
-	eye = eye.Sub(position.Vec3(0))
+	eye := Vec3{position.X(), position.Y(), -float32(c.z2D)}
 	c.view = LookAtV(eye, eye.Add(Vec3{0, 0, 1}), Vec3{0, -1, 0})
 }
 func (c *Camera) Init2D(width, height int32) {
