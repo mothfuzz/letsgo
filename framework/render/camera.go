@@ -31,7 +31,7 @@ func (c *Camera) Look2D(position Vec2) {
 }
 func (c *Camera) Init2D(width, height int32) {
 	c.SetViewSize(width, height)
-	c.Look2D(Vec2{0, 0})
+	c.Look2D(Vec2{float32(width / 2), float32(height / 2)})
 }
 func (c *Camera) GetZ2D() float32 {
 	return c.z2D
