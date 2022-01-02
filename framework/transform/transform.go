@@ -11,6 +11,14 @@ type Transform struct {
 	scale    Vec3
 }
 
+type HasTransform interface {
+	GetTransform() *Transform
+}
+
+func (t *Transform) GetTransform() *Transform {
+	return t
+}
+
 func (t *Transform) GetPositionV() Vec3 {
 	return t.position
 }
