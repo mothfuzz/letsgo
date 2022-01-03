@@ -9,7 +9,6 @@ import (
 	"github.com/mothfuzz/dyndraw/framework/input"
 
 	"github.com/mothfuzz/dyndraw/framework/app"
-	//"github.com/mothfuzz/dyndraw/framework/events"
 	"github.com/mothfuzz/dyndraw/framework/render"
 	"github.com/mothfuzz/dyndraw/framework/transform"
 )
@@ -76,7 +75,7 @@ func (b *BnW) Init()    {}
 func (b *BnW) Update()  {}
 func (b *BnW) Destroy() {}
 func (b *BnW) Draw() {
-	render.DrawSprite("circle.png", b.Transform.Mat4())
+	render.DrawSprite("bnw.png", b.Transform.Mat4())
 }
 
 type CameraController struct {
@@ -129,12 +128,12 @@ func main() {
 		g.Transform.Translate(float32(i)*64.0, 120, float32(i)*100.0)
 		actors.Spawn(g)
 	}
-	for i := 0; i < 1; i++ {
+	for i := 1; i < 2; i++ {
 		g := &Friendly{Transform: transform.Origin2D(32, 32)}
 		g.Transform.Translate(float32(i)*100.0, 120, float32(i)*64.0)
 		actors.Spawn(g)
 	}
-	for i := 1; i < 2; i++ {
+	for i := 2; i < 3; i++ {
 		g := &BnW{Transform: transform.Origin2D(32, 32)}
 		g.Transform.Translate(float32(i)*64.0, 120, float32(i)*-100.0)
 		actors.Spawn(g)

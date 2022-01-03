@@ -44,6 +44,7 @@ func Destroy(a Actor) {
 }
 func DestroyId(id ActorId) {
 	if id.id != 0 {
+		DestroyListener(id)
 		actorsMap[id].Destroy()
 		delete(actorsMap, id)
 	}
