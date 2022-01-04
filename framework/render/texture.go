@@ -13,9 +13,9 @@ func Texture2D(name string, high_quality bool) uint32 {
 	if tex, ok := textures[name]; ok {
 		return tex
 	} else {
-		fmt.Println("loading new texture: "+name)
+		fmt.Println("loading new texture: " + name)
 		gl.GenTextures(1, &tex)
-		bytes, err := Resources.ReadFile("resources/textures/" + name)
+		bytes, err := ReadResource("textures/" + name)
 		if err != nil {
 			panic(err)
 		}
