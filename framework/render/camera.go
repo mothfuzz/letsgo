@@ -1,9 +1,9 @@
 package render
 
 import (
-	//"fmt"
-	. "github.com/go-gl/mathgl/mgl32"
 	"math"
+
+	. "github.com/go-gl/mathgl/mgl32"
 )
 
 type Camera struct {
@@ -39,6 +39,9 @@ func (c *Camera) Init2D(width, height int32) {
 func (c *Camera) GetZ2D() float32 {
 	return c.z2D
 }
+func (c *Camera) GetPosition() Vec3 {
+	return c.position
+}
 func (c *Camera) GetView() Mat4 {
 	return c.view
 }
@@ -46,6 +49,14 @@ func (c *Camera) GetProjection() Mat4 {
 	return c.projection
 }
 
-func RelativeToCamera(x, y int) Vec2 {
-	return Vec2{float32(x) + ActiveCamera.position.X(), float32(y) + ActiveCamera.position.Y()}
+func RelativeToCamera(x, y int) Vec3 {
+	//0 is near plane, 1 is far plane, so have to calculate projected Z first
+	winZ := Project(Vec3{0, 0, ActiveCamera.position.Z() + ActiveCamera.z2D}, ActiveCamera.view, ActiveCamera.projection, 0, 0, int(ActiveCamera.width), int(ActiveCamera.height)).Z()
+	//then unproject to get world space X & Y
+	v, err := UnProject(Vec3{float32(x), float32(ActiveCamera.height - int32(y)), winZ}, ActiveCamera.view, ActiveCamera.projection, 0, 0, int(ActiveCamera.width), int(ActiveCamera.height))
+	if err != nil {
+		//panics if view*proj is not invertible.......
+		panic(err)
+	}
+	return v
 }

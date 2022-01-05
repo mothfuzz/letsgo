@@ -39,10 +39,12 @@ func (g *Gopher) Update() {
 		g.Transform.Rotate2D(0.025)
 	}
 	if input.IsKeyReleased("h") {
-		x := rand.Float32() * 320.0
-		y := rand.Float32() * 240.0
-		t := transform.Origin2D(16, 16)
-		t.Translate2D(x, y)
+		//x := rand.Float32() * 320.0
+		//y := rand.Float32() * 240.0
+		mx, my := input.GetMousePosition()
+		x, y, z := render.RelativeToCamera(mx, my).Elem()
+		t := transform.Origin2D(32, 32)
+		t.Translate(x, y, z)
 		actors.Spawn(&Gopher{Transform: t})
 	}
 	if input.IsKeyDown("g") {
