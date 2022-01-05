@@ -7,6 +7,7 @@ import (
 )
 
 type Camera struct {
+	position      Vec3
 	view          Mat4
 	projection    Mat4
 	z2D           float32
@@ -23,10 +24,12 @@ func (c *Camera) Look(position Vec3, orientation Quat) {
 	center := Vec3{0, 0, 1}
 	center = orientation.Rotate(center)
 	center = position.Add(center)
+	c.position = position
 	c.view = LookAtV(position, center, Vec3{0, -1, 0})
 }
 func (c *Camera) Look2D(position Vec2) {
 	eye := Vec3{position.X(), position.Y(), -float32(c.z2D)}
+	c.position = position.Vec3(0)
 	c.view = LookAtV(eye, eye.Add(Vec3{0, 0, 1}), Vec3{0, -1, 0})
 }
 func (c *Camera) Init2D(width, height int32) {
@@ -41,4 +44,8 @@ func (c *Camera) GetView() Mat4 {
 }
 func (c *Camera) GetProjection() Mat4 {
 	return c.projection
+}
+
+func RelativeToCamera(x, y int) Vec2 {
+	return Vec2{float32(x) + ActiveCamera.position.X(), float32(y) + ActiveCamera.position.Y()}
 }
