@@ -77,6 +77,14 @@ func GetWindowSize() (int32, int32) {
 	return window.GetSize()
 }
 
+func SetFullScreen(fullscreen bool) {
+	if fullscreen {
+		window.SetFullscreen(0)
+	} else {
+		window.SetFullscreen(sdl.WINDOW_FULLSCREEN)
+	}
+}
+
 var timer uint32
 var frameTicks uint32
 var updateTicks uint32
