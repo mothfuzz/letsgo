@@ -1,8 +1,6 @@
 package actors
 
-import (
 //"fmt"
-)
 
 type ActorId struct {
 	id int64

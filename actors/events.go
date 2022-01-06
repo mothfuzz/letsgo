@@ -1,9 +1,11 @@
-package events
+package actors
 
 import (
 	//"fmt"
 	"reflect"
 )
+
+//more general pubsub system
 
 type Channel = chan interface{}
 
