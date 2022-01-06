@@ -79,9 +79,9 @@ func GetWindowSize() (int32, int32) {
 
 func SetFullScreen(fullscreen bool) {
 	if fullscreen {
-		window.SetFullscreen(0)
-	} else {
 		window.SetFullscreen(sdl.WINDOW_FULLSCREEN)
+	} else {
+		window.SetFullscreen(0)
 	}
 }
 
