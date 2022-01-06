@@ -85,6 +85,14 @@ func SetFullScreen(fullscreen bool) {
 	}
 }
 
+func SetVSync(vsync bool) {
+	if vsync {
+		sdl.GLSetSwapInterval(1)
+	} else {
+		sdl.GLSetSwapInterval(0)
+	}
+}
+
 var timer uint32
 var frameTicks uint32
 var updateTicks uint32
