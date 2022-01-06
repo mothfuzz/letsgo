@@ -109,7 +109,6 @@ func Update() {
 	}
 
 	//fixed timestep of 125fps for updates for the smooth
-	fmt.Println(updateTicks)
 	for updateTicks > 8 {
 		updateTicks -= 8
 		actors.Update()
