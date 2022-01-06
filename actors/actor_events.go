@@ -2,7 +2,7 @@ package actors
 
 import (
 	//"fmt"
-	"github.com/mothfuzz/dyndraw/framework/events"
+	"github.com/mothfuzz/letsgo/events"
 	"reflect"
 )
 

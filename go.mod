@@ -1,4 +1,4 @@
-module github.com/mothfuzz/dyndraw
+module github.com/mothfuzz/letsgo
 
 go 1.17
 
@@ -8,4 +8,4 @@ require (
 	github.com/veandco/go-sdl2 v0.4.10
 )
 
-require golang.org/x/image v0.0.0-20190321063152-3fc05d484e9f // indirect
+require golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect

@@ -1,8 +1,8 @@
 package collision
 
 import (
-	"github.com/mothfuzz/dyndraw/framework/transform"
-	. "github.com/mothfuzz/dyndraw/framework/vecmath"
+	"github.com/mothfuzz/letsgo/transform"
+	. "github.com/mothfuzz/letsgo/vecmath"
 )
 
 type CollisionShape uint8

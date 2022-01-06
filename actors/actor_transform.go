@@ -1,6 +1,6 @@
 package actors
 
-import "github.com/mothfuzz/dyndraw/framework/transform"
+import "github.com/mothfuzz/letsgo/transform"
 
 func SpawnAt(a Actor, at transform.Transform) ActorId {
 	if t, ok := a.(transform.HasTransform); ok {

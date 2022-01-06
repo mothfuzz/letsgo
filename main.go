@@ -5,12 +5,11 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/mothfuzz/dyndraw/framework/actors"
-	"github.com/mothfuzz/dyndraw/framework/input"
-
-	"github.com/mothfuzz/dyndraw/framework/app"
-	"github.com/mothfuzz/dyndraw/framework/render"
-	"github.com/mothfuzz/dyndraw/framework/transform"
+	"github.com/mothfuzz/letsgo/actors"
+	"github.com/mothfuzz/letsgo/app"
+	"github.com/mothfuzz/letsgo/input"
+	"github.com/mothfuzz/letsgo/render"
+	"github.com/mothfuzz/letsgo/transform"
 )
 
 //testing out rendering pipeline within an actor context

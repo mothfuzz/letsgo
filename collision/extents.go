@@ -1,7 +1,7 @@
 package collision
 
 import (
-	. "github.com/mothfuzz/dyndraw/framework/vecmath"
+	. "github.com/mothfuzz/letsgo/vecmath"
 	"math"
 )
 

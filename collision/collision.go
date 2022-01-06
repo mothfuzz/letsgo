@@ -3,9 +3,9 @@ package collision
 import (
 	"math"
 
-	"github.com/mothfuzz/dyndraw/framework/actors"
-	"github.com/mothfuzz/dyndraw/framework/transform"
-	. "github.com/mothfuzz/dyndraw/framework/vecmath"
+	"github.com/mothfuzz/letsgo/actors"
+	"github.com/mothfuzz/letsgo/transform"
+	. "github.com/mothfuzz/letsgo/vecmath"
 )
 
 func insideTriangleVertices(p Vec3, r float32, a, b, c Vec3) bool {
