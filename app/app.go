@@ -49,7 +49,7 @@ func Init() {
 	if err = gl.Init(); err != nil {
 		panic(err)
 	}
-	sdl.GLSetSwapInterval(1)
+	//sdl.GLSetSwapInterval(1)
 
 	fmt.Println(gl.GoStr(gl.GetString(gl.VERSION)))
 
