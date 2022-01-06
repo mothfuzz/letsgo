@@ -1,0 +1,14 @@
+#+TITLE: Readme
+
+* Let's Go!
+A simple game engine written in Go.
+The engine is minimal, making it easy-to-use and adaptable to most games.
+
+Features at a glance:
+- actor system for easy & intuitive entity creation and management
+- asynchronous event system for spaghetti-free entity communication
+- dynamic Bring-Your-Own-Shaders OpenGL renderer that can draw anything you can code
+- no difference between 2D and 3D - everything just works naturally as you'd expect
+- included sprite renderer with batching
+- collision system with overlap detection, raycasting, and movement across arbitrary meshes
+- just-in-time resource loading, support for embedded files, static linking, & single-executable deployment
