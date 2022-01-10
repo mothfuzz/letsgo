@@ -1,4 +1,4 @@
-package render
+package resources
 
 import (
 	"embed"

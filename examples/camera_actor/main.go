@@ -2,17 +2,17 @@ package main
 
 import (
 	"embed"
-	"math/rand"
-	"time"
 
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/mothfuzz/letsgo/actors"
 	"github.com/mothfuzz/letsgo/app"
 	"github.com/mothfuzz/letsgo/input"
 	"github.com/mothfuzz/letsgo/render"
+	"github.com/mothfuzz/letsgo/resources"
 	"github.com/mothfuzz/letsgo/transform"
 )
 
-//testing out rendering pipeline within an actor context
+//something we can see.
 type Gopher struct {
 	transform.Transform
 	render.SpriteAnimation
@@ -38,8 +38,6 @@ func (g *Gopher) Update() {
 		g.Transform.Rotate2D(0.025)
 	}
 	if input.IsKeyReleased("h") {
-		//x := rand.Float32() * 320.0
-		//y := rand.Float32() * 240.0
 		mx, my := input.GetMousePosition()
 		x, y, z := render.RelativeToCamera(mx, my).Elem()
 		t := transform.Origin2D(32, 32)
@@ -53,31 +51,8 @@ func (g *Gopher) Update() {
 }
 func (g *Gopher) Draw() {
 	render.DrawSpriteAnimated("gopog.png", g.Transform.Mat4(), g.SpriteAnimation.GetTexCoords("idle", g.animationIndex))
-	//render.DrawSprite("gopog.png", g.Transform.Mat4())
 }
 func (g *Gopher) Destroy() {}
-
-type Friendly struct {
-	transform.Transform
-}
-
-func (f *Friendly) Init()    {}
-func (f *Friendly) Update()  {}
-func (f *Friendly) Destroy() {}
-func (f *Friendly) Draw() {
-	render.DrawSprite("friendly.png", f.Transform.Mat4())
-}
-
-type BnW struct {
-	transform.Transform
-}
-
-func (b *BnW) Init()    {}
-func (b *BnW) Update()  {}
-func (b *BnW) Destroy() {}
-func (b *BnW) Draw() {
-	render.DrawSprite("bnw.png", b.Transform.Mat4())
-}
 
 type CameraController struct {
 	transform.Transform
@@ -85,24 +60,30 @@ type CameraController struct {
 }
 
 func (c *CameraController) Init() {
-	c.Camera.SetViewSize(320, 240)
+	c.Camera.SetViewSize(800, 600)
 	c.Transform.SetRotation(0, 0, 0)
-	c.Transform.SetPosition(160, 120, -c.Camera.GetZ2D())
+	c.Transform.SetPosition(400, 300, -c.Camera.GetZ2D())
 	render.ActiveCamera = &c.Camera
 }
 func (c *CameraController) Update() {
+	motionVec := c.Transform.GetRotationQ().Rotate(mgl32.Vec3{0, 0, 1})
 	if input.IsKeyDown("w") {
-		c.Transform.Translate(0, 0, 1)
+		c.Transform.Translate(motionVec.X(), 0, motionVec.Z())
 	}
 	if input.IsKeyDown("s") {
-		c.Transform.Translate(0, 0, -1)
+		c.Transform.Translate(-motionVec.X(), 0, -motionVec.Z())
 	}
 	if input.IsKeyDown("a") {
-		c.Transform.Translate(-1, 0, 0)
+		c.Transform.Translate(-motionVec.Z(), 0, motionVec.X())
 	}
 	if input.IsKeyDown("d") {
-		c.Transform.Translate(1, 0, 0)
+		c.Transform.Translate(motionVec.Z(), 0, -motionVec.X())
 	}
+	dx, dy := input.GetMouseMovement()
+	horiz := mgl32.QuatRotate(float32(dx)/800.0, mgl32.Vec3{0, 1, 0})
+	vert := mgl32.QuatRotate(float32(dy)/600.0, mgl32.Vec3{-1, 0, 0})
+	rotation := horiz.Mul(c.Transform.GetRotationQ()).Mul(vert)
+	c.Transform.SetRotationQ(rotation)
 	if input.IsKeyDown("up") {
 		c.Transform.Rotate(0.02, 0, 0)
 	}
@@ -117,26 +98,16 @@ func (c *CameraController) Destroy() {}
 var Resources embed.FS
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-
-	render.Resources = Resources
+	resources.Resources = Resources
 	app.Init()
 	defer app.Quit()
-	app.SetWindowSize(320, 240)
+	app.SetWindowSize(800, 600)
+	//app.SetFullScreen(true)
+	app.SetRelativeCursor(true)
 
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 5; i++ {
 		g := &Gopher{Transform: transform.Origin2D(32, 32)}
-		g.Transform.Translate(float32(i)*64.0, 120, float32(i)*100.0)
-		actors.Spawn(g)
-	}
-	for i := 1; i < 2; i++ {
-		g := &Friendly{Transform: transform.Origin2D(32, 32)}
-		g.Transform.Translate(float32(i)*100.0, 120, float32(i)*64.0)
-		actors.Spawn(g)
-	}
-	for i := 2; i < 3; i++ {
-		g := &BnW{Transform: transform.Origin2D(32, 32)}
-		g.Transform.Translate(float32(i)*64.0, 120, float32(i)*-100.0)
+		g.Transform.Translate(float32(i)*64.0, 300, float32(i)*100.0)
 		actors.Spawn(g)
 	}
 

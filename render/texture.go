@@ -3,6 +3,7 @@ package render
 import (
 	"fmt"
 	gl "github.com/go-gl/gl/v3.1/gles2"
+	"github.com/mothfuzz/letsgo/resources"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -15,7 +16,7 @@ func Texture2D(name string, high_quality bool) uint32 {
 	} else {
 		fmt.Println("loading new texture: " + name)
 		gl.GenTextures(1, &tex)
-		bytes, err := ReadResource("textures/" + name)
+		bytes, err := resources.ReadResource("textures/" + name)
 		if err != nil {
 			panic(err)
 		}

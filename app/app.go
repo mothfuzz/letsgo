@@ -9,6 +9,8 @@ import (
 	"github.com/mothfuzz/letsgo/render"
 
 	gl "github.com/go-gl/gl/v3.1/gles2"
+	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -28,6 +30,18 @@ func Init() {
 	if err = sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
 	}
+
+	if err := img.Init(img.INIT_JPG | img.INIT_PNG | img.INIT_TIF | img.INIT_WEBP); err != nil {
+		panic(err)
+	}
+
+	if err := mix.Init(int(mix.INIT_MP3)); err != nil {
+		panic(err)
+	}
+	if err = mix.OpenAudio(22050, uint16(mix.DEFAULT_FORMAT), 2, 4096); err != nil {
+		panic(err)
+	}
+
 	sdl.GLSetAttribute(sdl.GL_CONTEXT_PROFILE_MASK, sdl.GL_CONTEXT_PROFILE_ES)
 	sdl.GLSetAttribute(sdl.GL_CONTEXT_MAJOR_VERSION, 2)
 	sdl.GLSetAttribute(sdl.GL_CONTEXT_MINOR_VERSION, 0)
@@ -93,6 +107,14 @@ func SetVSync(vsync bool) {
 	}
 }
 
+func SetRelativeCursor(rc bool) {
+	if rc {
+		sdl.SetRelativeMouseMode(true)
+	} else {
+		sdl.SetRelativeMouseMode(false)
+	}
+}
+
 var timer uint32
 var frameTicks uint32
 var updateTicks uint32
@@ -144,6 +166,9 @@ func Draw() {
 
 func Quit() {
 	window.Destroy()
+	mix.CloseAudio()
+	mix.Quit()
+	img.Quit()
 	sdl.GLDeleteContext(context)
 	sdl.Quit()
 	actors.DestroyAll()

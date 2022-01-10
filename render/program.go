@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	gl "github.com/go-gl/gl/v3.1/gles2"
+	"github.com/mothfuzz/letsgo/resources"
 )
 
 type Attribute struct {
@@ -32,7 +33,7 @@ func (p *Program) loadShaders(vert_file string, frag_file string) {
 	fmt.Printf("loading shaders: %s/%s\n", vert_file, frag_file)
 	//load & compile the shaders
 	vert_shader := gl.CreateShader(gl.VERTEX_SHADER)
-	vert_source, err := ReadResource("shaders/" + vert_file)
+	vert_source, err := resources.ReadResource("shaders/" + vert_file)
 	if err != nil {
 		panic(err)
 	}
@@ -51,7 +52,7 @@ func (p *Program) loadShaders(vert_file string, frag_file string) {
 		fmt.Printf("%s\n", buf)
 	}
 	frag_shader := gl.CreateShader(gl.FRAGMENT_SHADER)
-	frag_source, err := ReadResource("shaders/" + frag_file)
+	frag_source, err := resources.ReadResource("shaders/" + frag_file)
 	if err != nil {
 		panic(err)
 	}

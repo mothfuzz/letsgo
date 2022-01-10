@@ -69,6 +69,9 @@ func (t *Transform) Rotate(x, y, z float32) {
 func (t *Transform) SetRotation(x, y, z float32) {
 	t.rotation = AnglesToQuat(x, y, z, XYZ)
 }
+func (t *Transform) SetRotationQ(q Quat) {
+	t.rotation = q
+}
 func (t *Transform) Rotate2D(a float32) {
 	q := AnglesToQuat(0, 0, a, XYZ)
 	t.rotation = t.rotation.Mul(q)
