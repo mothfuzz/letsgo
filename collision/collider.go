@@ -45,35 +45,37 @@ func NewCollisionMesh(planes []Plane) Collider {
 	return Collider{planes, CollisionMesh, CalculateExtents(planes), false}
 }
 func NewBoundingBox(w, h, d float32) Collider {
-	//I don't like this either
-	v1 := Vec3{-w / 2, -h / 2, -d / 2}
-	v2 := Vec3{+w / 2, -h / 2, -d / 2}
-	v3 := Vec3{-w / 2, -h / 2, +d / 2}
-	v4 := Vec3{+w / 2, -h / 2, +d / 2}
-	v5 := Vec3{-w / 2, +h / 2, -d / 2}
-	v6 := Vec3{+w / 2, +h / 2, -d / 2}
-	v7 := Vec3{-w / 2, +h / 2, +d / 2}
-	v8 := Vec3{+w / 2, +h / 2, +d / 2}
+	v := []Vec3{
+		// front
+		{-w / 2, -h / 2, +d / 2},
+		{+w / 2, -h / 2, +d / 2},
+		{+w / 2, +h / 2, +d / 2},
+		{-w / 2, +h / 2, +d / 2},
+		// back
+		{-w / 2, -h / 2, -d / 2},
+		{+w / 2, -h / 2, -d / 2},
+		{+w / 2, +h / 2, -d / 2},
+		{-w / 2, +h / 2, -d / 2},
+	}
 	c := NewCollisionMesh([]Plane{
-		//12
-		//top
-		NewPlane(v1, v2, v4),
-		NewPlane(v1, v4, v3),
-		//bottom
-		NewPlane(v5, v6, v8),
-		NewPlane(v5, v8, v7),
-		//front
-		NewPlane(v3, v4, v8),
-		NewPlane(v3, v8, v7),
-		//back
-		NewPlane(v1, v2, v6),
-		NewPlane(v1, v6, v5),
-		//left
-		NewPlane(v1, v3, v7),
-		NewPlane(v1, v7, v5),
-		//right
-		NewPlane(v4, v2, v6),
-		NewPlane(v4, v6, v8),
+		// front
+		NewPlane(v[0], v[1], v[2]),
+		NewPlane(v[2], v[3], v[0]),
+		// right
+		NewPlane(v[1], v[5], v[6]),
+		NewPlane(v[6], v[2], v[1]),
+		// back
+		NewPlane(v[7], v[6], v[5]),
+		NewPlane(v[5], v[4], v[7]),
+		// left
+		NewPlane(v[4], v[0], v[3]),
+		NewPlane(v[3], v[7], v[4]),
+		// bottom
+		NewPlane(v[4], v[5], v[1]),
+		NewPlane(v[1], v[0], v[4]),
+		// top
+		NewPlane(v[3], v[2], v[6]),
+		NewPlane(v[6], v[7], v[3]),
 	})
 	c.Shape = BoundingBox
 	return c

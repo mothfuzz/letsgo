@@ -18,6 +18,9 @@ func (p *Plane) Origin() Vec3 {
 func (p *Plane) Normal() Vec3 {
 	return p.normal
 }
+func (p *Plane) Points() [3]Vec3 {
+	return p.points
+}
 
 func triNorm(a, b, c Vec3) Vec3 {
 	//(B - A) x (C - A)
@@ -35,7 +38,7 @@ func NewPlane(a, b, c Vec3) Plane {
 }
 func NewPlane2D(a Vec2, b Vec2) Plane {
 	l := a.Sub(b).Len()
-	t := a.Sub(b).Mul(0.5)
+	t := a.Add(b).Mul(0.5)
 	c := t.Vec3(l)
 	n := triNorm(a.Vec3(0), b.Vec3(0), c)
 	return Plane{t.Vec3(0), n, [3]Vec3{a.Vec3(0), b.Vec3(0), c}}
