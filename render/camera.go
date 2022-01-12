@@ -50,10 +50,12 @@ func (c *Camera) GetProjection() Mat4 {
 }
 
 func RelativeToCamera(x, y int) Vec3 {
+	startZ := ActiveCamera.position.Z() + ActiveCamera.z2D
 	//0 is near plane, 1 is far plane, so have to calculate projected Z first
-	winZ := Project(Vec3{0, 0, ActiveCamera.position.Z() + ActiveCamera.z2D}, ActiveCamera.view, ActiveCamera.projection, 0, 0, int(ActiveCamera.width), int(ActiveCamera.height)).Z()
+	winZ := Project(Vec3{0, 0, startZ}, ActiveCamera.view, ActiveCamera.projection, 0, 0, int(ActiveCamera.width), int(ActiveCamera.height)).Z()
 	//then unproject to get world space X & Y
 	v, err := UnProject(Vec3{float32(x), float32(ActiveCamera.height - int32(y)), winZ}, ActiveCamera.view, ActiveCamera.projection, 0, 0, int(ActiveCamera.width), int(ActiveCamera.height))
+	v[2] = startZ
 	if err != nil {
 		//panics if view*proj is not invertible.......
 		panic(err)
