@@ -58,18 +58,20 @@ func pointInTriangle(p Vec3, a, b, c Vec3) bool {
 	ab := b.Sub(a)
 	ac := c.Sub(a)
 	ap := p.Sub(a)
-	abac := ab.Cross(ac)
+	norm := ab.Cross(ac)
 	//check if 3 points are coplanar first
 	//the floating point errors are strong with this one...
-	if math.Abs(float64(ap.Dot(abac))) <= 1e-2 {
+	if math.Abs(float64(ap.Dot(norm))) <= 1e-2 {
 		//compute barycentric coords
-		//u = ||CAxCP|| / ||ABxAC||
-		//v = ||ABxAP|| / ||ABxAC||
-		//w = ||BCxBP|| / ||ABxAC||
-		abacl := abac.LenSqr()
-		u := c.Sub(a).Cross(c.Sub(p)).LenSqr() / abacl
-		v := a.Sub(b).Cross(a.Sub(p)).LenSqr() / abacl
-		w := b.Sub(c).Cross(b.Sub(p)).LenSqr() / abacl
+		ABC := norm.Dot(b.Sub(a).Cross(c.Sub(a)))
+		PBC := norm.Dot(b.Sub(p).Cross(c.Sub(p)))
+		PCA := norm.Dot(c.Sub(p).Cross(a.Sub(p)))
+		//PAB := norm.Dot(a.Sub(p).Cross(b.Sub(p)))
+
+		u := PBC / ABC // alpha
+		v := PCA / ABC // beta
+		//w := PAB / ABC // gamma
+		w := 1.0 - u - v // gamma
 		if u >= 0 && u <= 1 && v >= 0 && v <= 1 && w >= 0 && w <= 1 {
 			return true
 		} else {

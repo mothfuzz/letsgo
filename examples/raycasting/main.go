@@ -54,13 +54,7 @@ type BnW struct {
 }
 
 func (b *BnW) Init() {
-	b.Collider = collision.NewCollisionMesh([]collision.Plane{
-		collision.NewPlane2D(Vec2{-1.0 / 2.0, -1.0 / 2.0}, Vec2{-1.0 / 2.0, +1.0 / 2.0}),
-		collision.NewPlane2D(Vec2{-1.0 / 2.0, +1.0 / 2.0}, Vec2{+1.0 / 2.0, +1.0 / 2.0}),
-		collision.NewPlane2D(Vec2{+1.0 / 2.0, +1.0 / 2.0}, Vec2{+1.0 / 2.0, -1.0 / 2.0}),
-		collision.NewPlane2D(Vec2{+1.0 / 2.0, -1.0 / 2.0}, Vec2{-1.0 / 2.0, -1.0 / 2.0}),
-	})
-	//b.Collider = collision.NewBoundingBox(1, 1, 1) //has extra long edges for some reason
+	b.Collider = collision.NewBoundingBox(1, 1, 1) //has extra long edges for some reason
 }
 func (b *BnW) Update()  {}
 func (b *BnW) Destroy() {}
