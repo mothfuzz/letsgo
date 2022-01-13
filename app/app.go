@@ -115,6 +115,10 @@ func SetRelativeCursor(rc bool) {
 	}
 }
 
+func SetBackground(r, g, b float32) {
+	gl.ClearColor(r, g, b, 1.0)
+}
+
 var timer uint32
 var frameTicks uint32
 var updateTicks uint32
