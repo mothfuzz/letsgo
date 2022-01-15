@@ -32,6 +32,7 @@ func (g *Gopher) Init() {
 		},
 	}
 }
+
 func (g *Gopher) Update() {
 	if input.IsKeyDown("r") {
 		//g.Transform.Rotate(0, 0.025, 0)
