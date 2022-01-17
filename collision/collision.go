@@ -152,8 +152,7 @@ func RayCast(pos Vec3, ray Vec3) []RayHit {
 	return hits
 }
 func RayCastLen(pos Vec3, ray Vec3, l float32) (RayHit, bool) {
-	ll := l * l
-	shortest := ll
+	shortest := l
 	ok, hit := false, RayHit{}
 	for _, p := range RayCast(pos, ray) {
 		if p.Distance <= shortest {
