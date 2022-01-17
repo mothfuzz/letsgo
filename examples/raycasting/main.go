@@ -36,12 +36,12 @@ func (r *RayTest) Draw() {
 
 	ray := endPoint.Sub(startPoint).Normalize()
 	for _, p := range collision.RayCast(startPoint, ray) {
-		t.SetPosition(p.I.X(), p.I.Y(), -0.1)
+		t.SetPosition(p.Point.X(), p.Point.Y(), -0.1)
 		render.DrawSprite("point.png", t.Mat4())
 	}
 	if hit, ok := collision.RayCastLen(startPoint, ray, w/2); ok {
 		t := transform.Origin2D(4, 4)
-		t.SetPosition(hit.I.X(), hit.I.Y(), -0.2)
+		t.SetPosition(hit.Point.X(), hit.Point.Y(), -0.2)
 		render.DrawSprite("pointg.png", t.Mat4())
 	}
 

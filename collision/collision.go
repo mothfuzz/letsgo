@@ -122,7 +122,8 @@ func MoveAgainstPlanes(t *transform.Transform, planes []Plane, radius float32, x
 type RayHit struct {
 	actors.Actor
 	Plane
-	I Vec3
+	Point    Vec3
+	Distance float32
 }
 
 func RayCast(pos Vec3, ray Vec3) []RayHit {
@@ -143,7 +144,7 @@ func RayCast(pos Vec3, ray Vec3) []RayHit {
 				i := pos.Add(ray.Mul(t))
 				if t >= 0 && //t <= 1 && //t > 1 if plane exceeds distance
 					pointInTriangle(i, p.points[0], p.points[1], p.points[2]) {
-					hits = append(hits, RayHit{ac, p, i})
+					hits = append(hits, RayHit{ac, p, i, i.Sub(pos).Len()})
 				}
 			}
 		}
@@ -155,9 +156,8 @@ func RayCastLen(pos Vec3, ray Vec3, l float32) (RayHit, bool) {
 	shortest := ll
 	ok, hit := false, RayHit{}
 	for _, p := range RayCast(pos, ray) {
-		dist := p.I.Sub(pos).LenSqr()
-		if dist <= shortest {
-			shortest = dist
+		if p.Distance <= shortest {
+			shortest = p.Distance
 			ok = true
 			hit = p
 		}
