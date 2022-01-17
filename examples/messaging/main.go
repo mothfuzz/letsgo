@@ -44,14 +44,14 @@ func (r *Receiver) Update() {
 		case m := <-g.Mailbox:
 			g.MessageHandler(m)
 		default:
-			break
+			return
 		}
 	}*/
 	/*for {
 		if m, ok := g.Mailbox.Read(); ok {
 			g.MessageHandler(m)
 		} else {
-			break
+			return
 		}
 	}*/
 	r.Mailbox.HandleMessages(r.MessageHandler)
