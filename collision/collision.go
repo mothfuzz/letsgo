@@ -54,29 +54,22 @@ func insideTriangleEdges(p Vec3, r float32, a, b, c Vec3) bool {
 	}
 	return false
 }
-func pointInTriangle(p Vec3, a, b, c Vec3) bool {
-	ab := b.Sub(a)
-	ac := c.Sub(a)
-	ap := p.Sub(a)
-	norm := ab.Cross(ac)
-	//check if 3 points are coplanar first
-	//the floating point errors are strong with this one...
-	if math.Abs(float64(ap.Dot(norm))) <= 1e-2 {
-		//compute barycentric coords
-		ABC := norm.Dot(b.Sub(a).Cross(c.Sub(a)))
-		PBC := norm.Dot(b.Sub(p).Cross(c.Sub(p)))
-		PCA := norm.Dot(c.Sub(p).Cross(a.Sub(p)))
-		//PAB := norm.Dot(a.Sub(p).Cross(b.Sub(p)))
 
-		u := PBC / ABC // alpha
-		v := PCA / ABC // beta
-		//w := PAB / ABC // gamma
-		w := 1.0 - u - v // gamma
-		if u >= 0 && u <= 1 && v >= 0 && v <= 1 && w >= 0 && w <= 1 {
-			return true
-		} else {
-			return false
-		}
+//checks if a coplanar point is in a triangle
+func pointInTriangle(p Vec3, a, b, c Vec3) bool {
+	norm := b.Sub(a).Cross(c.Sub(a))
+	//compute barycentric coords
+	ABC := norm.Dot(b.Sub(a).Cross(c.Sub(a)))
+	PBC := norm.Dot(b.Sub(p).Cross(c.Sub(p)))
+	PCA := norm.Dot(c.Sub(p).Cross(a.Sub(p)))
+	//PAB := norm.Dot(a.Sub(p).Cross(b.Sub(p)))
+
+	u := PBC / ABC // alpha
+	v := PCA / ABC // beta
+	//w := PAB / ABC // gamma
+	w := 1.0 - u - v // gamma
+	if u >= 0 && u <= 1 && v >= 0 && v <= 1 && w >= 0 && w <= 1 {
+		return true
 	} else {
 		return false
 	}
