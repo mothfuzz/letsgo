@@ -66,8 +66,15 @@ func DrawSprites() {
 	defaultSpriteBatch.Draw()
 }
 
+type Frame struct {
+	X float32
+	Y float32
+	W float32
+	H float32
+}
+
 type SpriteAnimation struct {
-	Frames  [][]float32
+	Frames  []Frame
 	Tags    map[string][]int
 	buffers []Buffer
 }
@@ -82,14 +89,14 @@ func (s *SpriteAnimation) GetTexCoords(tag string, frame int) *Buffer {
 			copy(b.Data, Quad.TexCoord.Data)
 			for i := 0; i < len(b.Data)-1; i += 2 {
 				if b.Data[i] == 0 {
-					b.Data[i] = s.Frames[f][0]
+					b.Data[i] = s.Frames[f].X
 				} else {
-					b.Data[i] = s.Frames[f][0] + s.Frames[f][2]
+					b.Data[i] = s.Frames[f].X + s.Frames[f].W
 				}
 				if b.Data[i+1] == 0 {
-					b.Data[i+1] = s.Frames[f][1]
+					b.Data[i+1] = s.Frames[f].Y
 				} else {
-					b.Data[i+1] = s.Frames[f][1] + s.Frames[f][3]
+					b.Data[i+1] = s.Frames[f].Y + s.Frames[f].H
 				}
 			}
 		}
