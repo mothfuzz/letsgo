@@ -2,6 +2,7 @@ package render
 
 import (
 	//"fmt"
+	"github.com/go-gl/mathgl/mgl32"
 	. "github.com/go-gl/mathgl/mgl32"
 )
 
@@ -33,6 +34,8 @@ func (sb *SpriteBatch) Draw() {
 	}
 	for image, sprites := range sb.drawCalls {
 		sb.program.Uniform("tex", Texture2D(image, false))
+		w := float32(TexWidth(image))
+		h := float32(TexHeight(image))
 		for _, sprite := range sprites {
 			if sprite.texcoords == nil {
 				//if not animated, use preexisting quad
@@ -42,7 +45,8 @@ func (sb *SpriteBatch) Draw() {
 				sb.program.BindBuffer("texcoord", sprite.texcoords)
 			}
 			sb.program.LoadAttributes()
-			mv := ActiveCamera.GetView().Mul4(sprite.model)
+			m := sprite.model.Mul4(mgl32.Scale3D(w, h, 1))
+			mv := ActiveCamera.GetView().Mul4(m)
 			mvp := ActiveCamera.GetProjection().Mul4(mv)
 			sb.program.Uniform("MVP", [16]float32(mvp))
 			sb.program.DrawArrays()

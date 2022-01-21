@@ -8,14 +8,19 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-var textures = map[string]uint32{}
+type texture2D struct {
+	texId  uint32
+	width  int32
+	height int32
+}
 
-func Texture2D(name string, high_quality bool) uint32 {
+var textures = map[string]texture2D{}
+
+func loadTexture2D(name string, high_quality bool) texture2D {
 	if tex, ok := textures[name]; ok {
 		return tex
 	} else {
 		fmt.Println("loading new texture: " + name)
-		gl.GenTextures(1, &tex)
 		bytes, err := resources.ReadResource("textures/" + name)
 		if err != nil {
 			panic(err)
@@ -28,7 +33,10 @@ func Texture2D(name string, high_quality bool) uint32 {
 		if err != nil {
 			panic(err)
 		}
-		gl.BindTexture(gl.TEXTURE_2D, tex)
+		tex.width = image.W
+		tex.height = image.H
+		gl.GenTextures(1, &tex.texId)
+		gl.BindTexture(gl.TEXTURE_2D, tex.texId)
 		var format int32 = gl.RGBA
 		if image.BytesPerPixel() == 3 {
 			format = gl.RGB
@@ -46,4 +54,14 @@ func Texture2D(name string, high_quality bool) uint32 {
 		gl.BindTexture(gl.TEXTURE_2D, 0)
 		return tex
 	}
+}
+
+func Texture2D(name string, high_quality bool) uint32 {
+	return loadTexture2D(name, high_quality).texId
+}
+func TexWidth(name string) int {
+	return int(loadTexture2D(name, true).width)
+}
+func TexHeight(name string) int {
+	return int(loadTexture2D(name, true).height)
 }

@@ -110,15 +110,15 @@ func Origin() Transform {
 	return Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{1, 1, 1}}
 }
 
-func Origin2D(w int, h int) Transform {
-	return Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{float32(w), float32(h), 1}}
+func Origin2D() Transform {
+	return Transform{Vec3{0, 0, 0}, QuatIdent(), Vec3{1, 1, 1}}
 }
 
 func Location(x, y, z float32) Transform {
 	return Transform{Vec3{x, y, z}, QuatIdent(), Vec3{1, 1, 1}}
 }
-func Location2D(x, y, w, h float32) Transform {
-	return Transform{Vec3{x, y, 0}, QuatIdent(), Vec3{w, h, 1}}
+func Location2D(x, y float32) Transform {
+	return Transform{Vec3{x, y, 0}, QuatIdent(), Vec3{1, 1, 1}}
 }
 
 func MvpFromTransform(t Transform, v, p Mat4) [16]float32 {
