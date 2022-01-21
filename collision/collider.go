@@ -30,6 +30,7 @@ type HasCollider interface {
 	GetCollider() *Collider
 }
 
+//this should honestly just never be used
 func TransformCollider(c Collider, t transform.Transform) Collider {
 	c2 := Collider{Shape: c.Shape, IgnoreRaycast: c.IgnoreRaycast}
 	c2.Planes = make([]Plane, len(c.Planes))

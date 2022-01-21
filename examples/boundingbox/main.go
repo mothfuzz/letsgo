@@ -33,7 +33,7 @@ type BoundingActor struct {
 func (ba *BoundingActor) Init() {
 	ba.Collider = collision.NewBoundingBox(32, 32, 1)
 	ba.Transform.Scale2D(2, 2)
-	ba.Transform.Translate(0, 0, -1)
+	ba.Transform.Translate(0, 0, 1)
 }
 func (ba *BoundingActor) Update() {
 	ba.Transform.Rotate2D(0.02)
@@ -41,7 +41,7 @@ func (ba *BoundingActor) Update() {
 func (ba *BoundingActor) Destroy() {}
 func (ba *BoundingActor) Draw() {
 	render.DrawSprite("square.png", ba.Transform.Mat4())
-	c := collision.TransformCollider(ba.Collider, ba.Transform)
+	c := collision.TransformExtents(ba.Collider.Extents, ba.Transform)
 	DrawLine(c.Min.X(), c.Min.Y(), c.Max.X(), c.Min.Y())
 	DrawLine(c.Max.X(), c.Min.Y(), c.Max.X(), c.Max.Y())
 	DrawLine(c.Max.X(), c.Max.Y(), c.Min.X(), c.Max.Y())

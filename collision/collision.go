@@ -209,32 +209,34 @@ func ActorOverlap(a actors.Actor, b actors.Actor) bool {
 		if cb, ok := b.(HasCollider); ok {
 			aa := *ca.GetCollider()
 			bb := *cb.GetCollider()
-			//this could be less expensive, i.e. just transform extents
+			ae := aa.Extents
+			be := bb.Extents
+			//just transform extents
 			//since we're not checking polygons anyway
 			if at, ok := a.(transform.HasTransform); ok {
-				aa = TransformCollider(aa, *at.GetTransform())
+				ae = TransformExtents(ae, *at.GetTransform())
 			}
 			if bt, ok := b.(transform.HasTransform); ok {
-				bb = TransformCollider(bb, *bt.GetTransform())
+				be = TransformExtents(be, *bt.GetTransform())
 			}
 			//just check boxes for now
 			//we're not doing polygon-over-polygon collisions
 			if aa.Shape != BoundingSphere && bb.Shape != BoundingSphere {
-				return BoxOverlap(aa.Extents.Min, aa.Extents.Max, bb.Extents.Min, bb.Extents.Max)
+				return BoxOverlap(ae.Min, ae.Max, be.Min, be.Max)
 			}
 			//otherwise one of them is a sphere
-			ra := (aa.Extents.Max.X() - aa.Extents.Min.X()) / 2.0
-			rb := (bb.Extents.Max.X() - bb.Extents.Min.X()) / 2.0
-			ca := aa.Extents.Min.Add(aa.Extents.Max).Mul(0.5)
-			cb := aa.Extents.Min.Add(aa.Extents.Max).Mul(0.5)
+			ra := (ae.Max.X() - ae.Min.X()) / 2.0
+			rb := (be.Max.X() - be.Min.X()) / 2.0
+			ca := ae.Min.Add(ae.Max).Mul(0.5)
+			cb := be.Min.Add(be.Max).Mul(0.5)
 			if aa.Shape == BoundingSphere && bb.Shape == BoundingSphere {
 				return SphereOverlap(ca, ra, cb, rb)
 			}
 			if aa.Shape == BoundingSphere && bb.Shape != BoundingSphere {
-				return SphereBoxOverlap(ca, ra, bb.Extents.Min, bb.Extents.Max)
+				return SphereBoxOverlap(ca, ra, be.Min, be.Max)
 			}
 			if bb.Shape == BoundingSphere && aa.Shape != BoundingSphere {
-				return SphereBoxOverlap(cb, rb, aa.Extents.Min, aa.Extents.Max)
+				return SphereBoxOverlap(cb, rb, ae.Min, ae.Max)
 			}
 		}
 	}

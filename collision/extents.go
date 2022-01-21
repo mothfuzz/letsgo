@@ -1,6 +1,7 @@
 package collision
 
 import (
+	"github.com/mothfuzz/letsgo/transform"
 	. "github.com/mothfuzz/letsgo/vecmath"
 	"math"
 )
@@ -67,4 +68,42 @@ func CalculateExtents(planes []Plane) Extents {
 		maxz = max2(maxz, max3(a.Z(), b.Z(), c.Z()))
 	}
 	return Extents{Vec3{minx, miny, minz}, Vec3{maxx, maxy, maxz}}
+}
+func TransformExtents(e Extents, t transform.Transform) Extents {
+	m4 := t.Mat4()
+	points := [8]Vec3{
+		{e.Min.X(), e.Min.Y(), e.Min.Z()},
+		{e.Max.X(), e.Min.Y(), e.Min.Z()},
+		{e.Min.X(), e.Max.Y(), e.Min.Z()},
+		{e.Max.X(), e.Max.Y(), e.Min.Z()},
+		{e.Min.X(), e.Min.Y(), e.Max.Z()},
+		{e.Max.X(), e.Min.Y(), e.Max.Z()},
+		{e.Min.X(), e.Max.Y(), e.Max.Z()},
+		{e.Max.X(), e.Max.Y(), e.Max.Z()},
+	}
+	min := Vec3{1, 1, 1}.Mul(+1 * math.MaxFloat32)
+	max := Vec3{1, 1, 1}.Mul(-1 * math.MaxFloat32)
+	for i := 0; i < 8; i++ {
+		//multiply by homogenous coords
+		p := m4.Mul4x1(points[i].Vec4(1)).Vec3()
+		if p.X() < min.X() {
+			min[0] = p.X()
+		}
+		if p.Y() < min.Y() {
+			min[1] = p.Y()
+		}
+		if p.Z() < min.Z() {
+			min[2] = p.Z()
+		}
+		if p.X() > max.X() {
+			max[0] = p.X()
+		}
+		if p.Y() > max.Y() {
+			max[1] = p.Y()
+		}
+		if p.Z() > max.Z() {
+			max[2] = p.Z()
+		}
+	}
+	return Extents{min, max}
 }
