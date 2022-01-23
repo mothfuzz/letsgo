@@ -21,11 +21,12 @@ type Gopher struct {
 
 func (g *Gopher) Init() {
 	g.Transform.Translate(0, 0, -0.1)
+	g.Transform.Scale2D(1.0/3.0, 1)
 	g.SpriteAnimation = render.SpriteAnimation{
-		Frames: [][]float32{
-			{0.0 / 3.0, 0, 1.0 / 3.0, 1},
-			{1.0 / 3.0, 0, 1.0 / 3.0, 1},
-			{2.0 / 3.0, 0, 1.0 / 3.0, 1},
+		Frames: []render.Frame{
+			{X: 0.0 / 3.0, Y: 0, W: 1.0 / 3.0, H: 1},
+			{X: 1.0 / 3.0, Y: 0, W: 1.0 / 3.0, H: 1},
+			{X: 2.0 / 3.0, Y: 0, W: 1.0 / 3.0, H: 1},
 		},
 		Tags: map[string][]int{
 			"idle": {0, 1, 2},
@@ -41,7 +42,7 @@ func (g *Gopher) Update() {
 	if input.IsKeyReleased("h") {
 		mx, my := input.GetMousePosition()
 		x, y, z := render.RelativeToCamera(mx, my).Elem()
-		t := transform.Origin2D(32, 32)
+		t := transform.Origin2D()
 		t.Translate(x, y, z)
 		actors.Spawn(&Gopher{Transform: t})
 	}
@@ -107,7 +108,7 @@ func main() {
 	app.SetRelativeCursor(true)
 
 	for i := 0; i < 5; i++ {
-		g := &Gopher{Transform: transform.Origin2D(32, 32)}
+		g := &Gopher{Transform: transform.Origin2D()}
 		g.Transform.Translate(float32(i)*64.0, 300, float32(i)*100.0)
 		actors.Spawn(g)
 	}

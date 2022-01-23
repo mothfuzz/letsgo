@@ -30,7 +30,8 @@ func (r *RayTest) Draw() {
 	startPoint := Vec3{w / 2, h / 2, 0}
 	endPoint := render.RelativeToCamera(mx, my)
 
-	t := transform.Origin2D(4, 4)
+	t := transform.Origin2D()
+	t.SetScale2D(4, 4)
 	t.SetPosition(w/2, h/2, -0.1)
 	render.DrawSprite("pointg.png", t.Mat4())
 
@@ -40,7 +41,8 @@ func (r *RayTest) Draw() {
 		render.DrawSprite("point.png", t.Mat4())
 	}
 	if hit, ok := collision.RayCastLen(startPoint, ray, w/2); ok {
-		t := transform.Origin2D(4, 4)
+		t := transform.Origin2D()
+		t.SetScale2D(4, 4)
 		t.SetPosition(hit.Point.X(), hit.Point.Y(), -0.2)
 		render.DrawSprite("pointg.png", t.Mat4())
 	}
@@ -54,7 +56,7 @@ type BnW struct {
 }
 
 func (b *BnW) Init() {
-	b.Collider = collision.NewBoundingBox(1, 1, 1) //has extra long edges for some reason
+	b.Collider = collision.NewBoundingBox(16, 16, 1) //has extra long edges for some reason
 }
 func (b *BnW) Update()  {}
 func (b *BnW) Destroy() {}
@@ -62,11 +64,13 @@ func (b *BnW) Draw() {
 	render.DrawSprite("bnw.png", b.Transform.Mat4())
 	for _, p := range b.Collider.Planes {
 		p = collision.TransformPlane(p, b.Transform)
-		t := transform.Origin2D(2, 2)
+		t := transform.Origin2D()
+		t.SetScale2D(2, 2)
 		t.SetPosition(p.Origin().X(), p.Origin().Y(), p.Origin().Z()-0.1)
 		render.DrawSprite("point.png", t.Mat4())
 		for _, v := range p.Points() {
-			t := transform.Origin2D(2, 2)
+			t := transform.Origin2D()
+			t.SetScale2D(2, 2)
 			t.SetPosition(v.X(), v.Y(), v.Z()-0.1)
 			render.DrawSprite("pointg.png", t.Mat4())
 		}
@@ -84,14 +88,18 @@ func main() {
 	total := 12
 	for i := 0; i < total; i++ {
 		div := math.Pi * 2.0 / float64(total)
-		actors.SpawnAt(&BnW{}, transform.Location2D(
+		t := transform.Location2D(
 			w/2+float32(math.Sin(float64(i)*div))*w/4,
 			h/2+float32(math.Cos(float64(i)*div))*h/4,
-			32, 32))
-		actors.SpawnAt(&BnW{}, transform.Location2D(
+		)
+		t.SetScale2D(2, 2)
+		actors.SpawnAt(&BnW{}, t)
+		t = transform.Location2D(
 			w/2+float32(math.Sin(float64(i)*div))*w/2,
 			h/2+float32(math.Cos(float64(i)*div))*h/2,
-			64, 64))
+		)
+		t.SetScale2D(4, 4)
+		actors.SpawnAt(&BnW{}, t)
 	}
 
 	for app.PollEvents() {

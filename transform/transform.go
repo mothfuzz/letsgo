@@ -80,13 +80,13 @@ func (t *Transform) SetRotation2D(a float32) {
 	t.rotation = AnglesToQuat(0, 0, a, XYZ)
 }
 func (t *Transform) Scale(x, y, z float32) {
-	t.scale[0] += x
-	t.scale[1] += y
-	t.scale[2] += z
+	t.scale[0] *= x
+	t.scale[1] *= y
+	t.scale[2] *= z
 }
 func (t *Transform) Scale2D(x, y float32) {
-	t.scale[0] += x
-	t.scale[1] += y
+	t.scale[0] *= x
+	t.scale[1] *= y
 }
 func (t *Transform) SetScale(x, y, z float32) {
 	t.scale[0] = x
