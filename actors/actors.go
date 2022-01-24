@@ -6,8 +6,12 @@ type ActorId struct {
 	id int64
 }
 type Actor interface {
-	Init()
 	Update()
+}
+type OnInit interface {
+	Init()
+}
+type OnDestroy interface {
 	Destroy()
 }
 
@@ -18,7 +22,9 @@ func Spawn(a Actor) ActorId {
 	id := ActorId{base_id}
 	base_id++
 	actorsMap[id] = a
-	a.Init()
+	if a, ok := a.(OnInit); ok {
+		a.Init()
+	}
 	return id
 }
 
@@ -43,14 +49,16 @@ func Destroy(a Actor) {
 func DestroyId(id ActorId) {
 	if id.id != 0 {
 		DestroyListener(id)
-		actorsMap[id].Destroy()
+		if a, ok := actorsMap[id].(OnDestroy); ok {
+			a.Destroy()
+		}
 		delete(actorsMap, id)
 	}
 }
 
 func DestroyAll() {
-	for _, a := range actorsMap {
-		a.Destroy()
+	for id := range actorsMap {
+		DestroyId(id)
 	}
 }
 

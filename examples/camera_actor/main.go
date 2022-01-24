@@ -54,7 +54,6 @@ func (g *Gopher) Update() {
 func (g *Gopher) Draw() {
 	render.DrawSpriteAnimated("gopog.png", g.Transform.Mat4(), g.SpriteAnimation.GetTexCoords("idle", g.animationIndex))
 }
-func (g *Gopher) Destroy() {}
 
 type CameraController struct {
 	transform.Transform
@@ -94,7 +93,6 @@ func (c *CameraController) Update() {
 	}
 	c.Camera.Look(c.Transform.GetPositionV(), c.Transform.GetRotationQ())
 }
-func (c *CameraController) Destroy() {}
 
 //go:embed resources
 var Resources embed.FS

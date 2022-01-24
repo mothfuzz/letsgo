@@ -38,7 +38,6 @@ func (ba *BoundingActor) Init() {
 func (ba *BoundingActor) Update() {
 	ba.Transform.Rotate2D(0.02)
 }
-func (ba *BoundingActor) Destroy() {}
 func (ba *BoundingActor) Draw() {
 	render.DrawSprite("square.png", ba.Transform.Mat4())
 	c := collision.TransformExtents(ba.Collider.Extents, ba.Transform)

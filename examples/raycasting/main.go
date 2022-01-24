@@ -22,9 +22,7 @@ const h = float32(600)
 
 type RayTest struct{}
 
-func (r *RayTest) Init()    {}
-func (r *RayTest) Update()  {}
-func (r *RayTest) Destroy() {}
+func (r *RayTest) Update() {}
 func (r *RayTest) Draw() {
 	mx, my := input.GetMousePosition()
 	startPoint := Vec3{w / 2, h / 2, 0}
@@ -58,8 +56,7 @@ type BnW struct {
 func (b *BnW) Init() {
 	b.Collider = collision.NewBoundingBox(16, 16, 1) //has extra long edges for some reason
 }
-func (b *BnW) Update()  {}
-func (b *BnW) Destroy() {}
+func (b *BnW) Update() {}
 func (b *BnW) Draw() {
 	render.DrawSprite("bnw.png", b.Transform.Mat4())
 	for _, p := range b.Collider.Planes {
