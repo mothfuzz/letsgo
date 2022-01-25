@@ -1,47 +1,33 @@
 package input
 
 import (
-	//"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-func IsKeyDown(name string) bool {
-	keystate := sdl.GetKeyboardState()
-	return keystate[int(sdl.GetScancodeFromName(name))] != 0
+var keysCurrentFrame = map[sdl.Scancode]bool{}
+var keysPreviousFrame = map[sdl.Scancode]bool{}
+
+func UpdateKeys() {
+	for sc, on := range keysCurrentFrame {
+		keysPreviousFrame[sc] = on
+	}
+	sdl.PumpEvents()
+	for sc, val := range sdl.GetKeyboardState() {
+		keysCurrentFrame[sdl.Scancode(sc)] = (val != 0)
+	}
 }
 
-var keysPressed = map[sdl.Scancode]bool{}
-var keysReleased = map[sdl.Scancode]bool{}
+func IsKeyDown(name string) bool {
+	return keysCurrentFrame[sdl.GetScancodeFromName(name)]
+}
 
 func IsKeyPressed(name string) bool {
-	keystate := sdl.GetKeyboardState()
-	sc := sdl.GetScancodeFromName(name)
-	if keystate[int(sc)] != 0 {
-		if keysPressed[sc] {
-			return false
-		} else {
-			keysPressed[sc] = true
-			return true
-		}
-	} else {
-		keysPressed[sc] = false
-		return false
-	}
+	return keysCurrentFrame[sdl.GetScancodeFromName(name)] &&
+		!keysPreviousFrame[sdl.GetScancodeFromName(name)]
 }
 func IsKeyReleased(name string) bool {
-	keystate := sdl.GetKeyboardState()
-	sc := sdl.GetScancodeFromName(name)
-	if keystate[int(sc)] == 0 {
-		if !keysReleased[sc] {
-			return false
-		} else {
-			keysReleased[sc] = false
-			return true
-		}
-	} else {
-		keysReleased[sc] = true
-		return false
-	}
+	return !keysCurrentFrame[sdl.GetScancodeFromName(name)] &&
+		keysPreviousFrame[sdl.GetScancodeFromName(name)]
 }
 
 func IsMouseButtonDown(button string) bool {

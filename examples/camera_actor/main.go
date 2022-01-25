@@ -17,6 +17,7 @@ type Gopher struct {
 	transform.Transform
 	render.SpriteAnimation
 	animationIndex int
+	noSpawn        bool
 }
 
 func (g *Gopher) Init() {
@@ -39,12 +40,12 @@ func (g *Gopher) Update() {
 		//g.Transform.Rotate(0, 0.025, 0)
 		g.Transform.Rotate2D(0.025)
 	}
-	if input.IsKeyReleased("h") {
+	if input.IsKeyReleased("h") && !g.noSpawn {
 		mx, my := input.GetMousePosition()
 		x, y, z := render.RelativeToCamera(mx, my).Elem()
 		t := transform.Origin2D()
 		t.Translate(x, y, z)
-		actors.Spawn(&Gopher{Transform: t})
+		actors.Spawn(&Gopher{Transform: t, noSpawn: true})
 	}
 	if input.IsKeyDown("g") {
 		g.animationIndex += 1
@@ -105,11 +106,12 @@ func main() {
 	//app.SetFullScreen(true)
 	app.SetRelativeCursor(true)
 
-	for i := 0; i < 5; i++ {
-		g := &Gopher{Transform: transform.Origin2D()}
-		g.Transform.Translate(float32(i)*64.0, 300, float32(i)*100.0)
-		actors.Spawn(g)
-	}
+	//for i := 0; i < 5; i++ {
+	i := 0
+	g := &Gopher{Transform: transform.Origin2D()}
+	g.Transform.Translate(float32(i)*64.0, 300, float32(i)*100.0)
+	actors.Spawn(g)
+	//}
 
 	actors.Spawn(&CameraController{})
 

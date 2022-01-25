@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/mothfuzz/letsgo/actors"
+	"github.com/mothfuzz/letsgo/input"
 	"github.com/mothfuzz/letsgo/render"
 
 	gl "github.com/go-gl/gl/v3.1/gles2"
@@ -135,7 +136,6 @@ func PollEvents() bool {
 			}
 		}
 	}
-
 	return true
 }
 func Update() {
@@ -152,6 +152,8 @@ func Update() {
 
 	//fixed timestep of 125fps for updates for the smooth
 	for updateTicks > 8 {
+		//update input in here too, since it's per-tick
+		input.UpdateKeys()
 		updateTicks -= 8
 		actors.Update()
 	}
