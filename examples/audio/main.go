@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"github.com/mothfuzz/letsgo/app"
 	"github.com/mothfuzz/letsgo/resources"
 	"github.com/mothfuzz/letsgo/sound"
