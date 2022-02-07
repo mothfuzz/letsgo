@@ -39,7 +39,7 @@ func Init() {
 	if err := mix.Init(int(mix.INIT_MP3)); err != nil {
 		panic(err)
 	}
-	if err = mix.OpenAudio(22050, uint16(mix.DEFAULT_FORMAT), 2, 4096); err != nil {
+	if err = mix.OpenAudio(44100, uint16(mix.DEFAULT_FORMAT), 2, 512); err != nil {
 		panic(err)
 	}
 

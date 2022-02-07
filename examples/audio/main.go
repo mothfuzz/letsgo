@@ -2,11 +2,20 @@ package main
 
 import (
 	"embed"
+	"github.com/mothfuzz/letsgo/actors"
 	"github.com/mothfuzz/letsgo/app"
+	"github.com/mothfuzz/letsgo/input"
 	"github.com/mothfuzz/letsgo/resources"
 	"github.com/mothfuzz/letsgo/sound"
-	"github.com/mothfuzz/letsgo/input"
 )
+
+type Bonk struct{}
+
+func (b *Bonk) Update() {
+	if input.IsKeyPressed("b") {
+		sound.PlaySound("bonk.mp3")
+	}
+}
 
 //go:embed resources
 var Resources embed.FS
@@ -20,11 +29,9 @@ func main() {
 
 	sound.PlayMusic("eh.mp3")
 	sound.PlaySound("bonk.mp3")
+	actors.Spawn(&Bonk{})
 
 	for app.PollEvents() {
-		if input.IsKeyPressed("b") {
-			sound.PlaySound("bonk.mp3")
-		}
 		app.Update()
 		app.Draw()
 	}
