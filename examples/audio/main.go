@@ -2,9 +2,11 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/mothfuzz/letsgo/app"
 	"github.com/mothfuzz/letsgo/resources"
 	"github.com/mothfuzz/letsgo/sound"
+	"github.com/mothfuzz/letsgo/input"
 )
 
 //go:embed resources
@@ -21,6 +23,9 @@ func main() {
 	sound.PlaySound("bonk.mp3")
 
 	for app.PollEvents() {
+		if input.IsKeyPressed("b") {
+			sound.PlaySound("bonk.mp3")
+		}
 		app.Update()
 		app.Draw()
 	}
