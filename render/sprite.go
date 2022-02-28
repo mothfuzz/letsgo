@@ -37,17 +37,23 @@ func (sb *SpriteBatch) Draw() {
 		w := float32(TexWidth(image))
 		h := float32(TexHeight(image))
 		for _, sprite := range sprites {
+			var m Mat4
 			if sprite.texcoords == nil {
 				//if not animated, use preexisting quad
 				sb.program.BindBuffer("texcoord", Quad.TexCoord)
+				//width is the width of the whole image
+				m = sprite.model.Mul4(mgl32.Scale3D(w, h, 1))
 			} else {
 				//if animated, use dynamically generated buffer
 				sb.program.BindBuffer("texcoord", sprite.texcoords)
+				//width is the width of the individual frame
+				tw := sprite.texcoords.Data[2] - sprite.texcoords.Data[0]
+				th := sprite.texcoords.Data[1] - sprite.texcoords.Data[5]
+				m = sprite.model.Mul4(mgl32.Scale3D(w*tw, h*th, 1))
 			}
-			sb.program.LoadAttributes()
-			m := sprite.model.Mul4(mgl32.Scale3D(w, h, 1))
 			mv := ActiveCamera.GetView().Mul4(m)
 			mvp := ActiveCamera.GetProjection().Mul4(mv)
+			sb.program.LoadAttributes()
 			sb.program.Uniform("MVP", [16]float32(mvp))
 			sb.program.DrawArrays()
 		}

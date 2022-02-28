@@ -22,7 +22,6 @@ type Gopher struct {
 
 func (g *Gopher) Init() {
 	g.Transform.Translate(0, 0, -0.1)
-	g.Transform.Scale2D(1.0/3.0, 1)
 	g.SpriteAnimation = render.SpriteAnimation{
 		Frames: []render.Frame{
 			{X: 0.0 / 3.0, Y: 0, W: 1.0 / 3.0, H: 1},
